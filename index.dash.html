@@ -84,6 +84,9 @@ dl{margin-top:8px;background:var(--wipb);border-radius:10px;padding:9px 12px;fon
 .asof{margin-left:auto;font-size:12px;font-weight:700;color:var(--mu);background:var(--sf2);border:1px solid var(--ln);border-radius:99px;padding:5px 12px;white-space:nowrap}
 #menu{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--ln);background:var(--sf);cursor:pointer;place-items:center}#menu svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 @media(max-width:1023px){.side{position:fixed;inset:0 auto 0 0;transform:translateX(-100%);padding-top:env(safe-area-inset-top,0px)}.side.on{transform:none}#menu{display:grid}.top{padding:10px 16px}.asof{display:none}}
+.wz{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 16px 24px}
+.wzb{background:var(--bg);border-radius:16px;max-width:980px;margin:0 auto;padding:20px;border:1px solid var(--ln)}
+.wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:12px}.wg label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mu);font-weight:700}.wg select{width:100%}
 @media(max-width:820px){.g{grid-template-columns:1fr}#v{padding:14px}.tw{max-height:none}header{padding:10px 14px 0}}
 </style></head><body>
 <div id="scrim"></div>
@@ -186,12 +189,15 @@ function vQ(){
 const common=[['bu','Business unit','s',()=>D.bu],['p','Prio','s',()=>['P0','P1','P2','P3']],['dv','Divisi','s',()=>D.dvs],['dp','Departemen','s',()=>D.dps],['cat','Kategori','s',()=>D.fw.map(f=>f.n)],['st','Status','s',()=>SO],['sd','Mulai','d'],['ed','Selesai','d'],['dl','Deliverable','t'],['note','Catatan','t']];
 const COLS={main:[['title','Permintaan','t'],...common],proj:[['project','Proyek','t'],['sub','Sub-task','t'],...common,['pi','PI','t'],['ca','CA','t']],
  docs:[['name','Dokumen','t'],common[2],common[3],common[4],['inst','Pihak kedua','t'],['sd','Mulai','d'],['ed','Berakhir','d'],['file','File','t']]};
+const EXTRA={main:[],proj:[],docs:[]};
+const CL=()=>COLS[EDS].concat(EXTRA[EDS].map(n=>['x_'+n,n,'t']));
+try{const s=JSON.parse(localStorage.getItem('lcc-v2')||'null');if(s&&s.extra)Object.assign(EXTRA,s.extra);if(s&&s.lists){D.bu=s.lists.bu||D.bu;D.dvs=s.lists.dvs||D.dvs;D.dps=s.lists.dps||D.dps;D.fw=s.lists.fw||D.fw}}catch(e){}
 const BLANK={main:()=>({title:'',bu:'',p:'P1',dv:'',dp:'',cat:'Contract Management',st:'Not started',sd:null,ed:null,dl:'',note:''}),
  proj:()=>({project:'',sub:'',bu:'',p:'P1',dv:'',dp:'',cat:'Compliance & Regulatory / Affairs',st:'Not started',sd:null,ed:null,dl:'',note:'',pi:'',ca:''}),
  docs:()=>({name:'',dv:'',dp:'',cat:'Contract Management',inst:'',sd:null,ed:null,file:''})};
 let EDS='main';const DSET=()=>({main:M,proj:P,docs:DOC})[EDS];
 const msg=s=>{const m=$('msg');if(m)m.textContent=s};
-function touch(){fix();derive();live();try{localStorage.setItem('lcc-v2',JSON.stringify({main:M,proj:P,docs:DOC}));msg('Tersimpan di browser ini')}catch(e){msg('Tidak bisa menyimpan di browser ini, unduh Excel')}}
+function touch(){fix();derive();live();try{localStorage.setItem('lcc-v2',JSON.stringify({main:M,proj:P,docs:DOC,extra:EXTRA,lists:{bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw}}));msg('Tersimpan di browser ini')}catch(e){msg('Tidak bisa menyimpan di browser ini, unduh Excel')}}
 function cell(c,v,i){const k=c[0],a=`data-i="${i}" data-k="${k}" aria-label="${c[1]}"`;v=v==null?'':v;
  if(c[2]==='d')return `<input type="date" ${a} value="${esc(v)}">`;
  if(c[2]==='s'){let L=c[3]();if(v!==''&&!L.includes(v))L=[...L,v];return `<select ${a}><option value=""></option>${L.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${esc(k==='st'&&ST[x]?ST[x][0]:x)}</option>`).join('')}</select>`}
@@ -208,14 +214,14 @@ function vis(){const q=($('eq').value||'').toLowerCase(),s=$('fst').value;let n=
 function vEdit(tab){
   tab=tab||ETAB;ETAB=tab;if(tab!=='edit')EDS=({proyek:'proj',dokumen:'docs'})[tab]||'main';
   EF=PRE[tab]&&tab!=='tracker'?PRE[tab]:null;
-  const cols=COLS[EDS],a=DSET();SEL.clear();
+  const cols=CL(),a=DSET();SEL.clear();
   const so=EDS==='docs'?Object.keys(DS).map(k=>[k,DS[k][0]]):SO.map(k=>[k,ST[k][0]]);
   $('v').innerHTML=`<section class="pn" style="padding:12px 16px"><div class="tools">
   ${tab==='edit'?[['main','Tracker utama'],['proj','Proyek'],['docs','Dokumen']].map(([k,l])=>`<button class="btn${k===EDS?' on':''}" data-ds="${k}">${l}</button>`).join(''):''}
   <b id="cnt"></b><input id="eq" class="fi" type="search" placeholder="Cari baris" aria-label="Cari baris">
   <select id="fst" class="fi" aria-label="Filter status"><option value="ALL">Semua status</option>${so.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select>
   <button class="btn" id="add">+ Tambah baris</button><button class="btn" id="exp">Unduh Excel</button>
-  <label class="btn">Impor Excel<input id="imp" type="file" accept=".xlsx,.xls" hidden></label>
+  <label class="btn">Impor Excel<input id="imp" type="file" accept=".xlsx,.xls,.xlsm,.csv" hidden></label>
   <button class="btn" id="rst">Kosongkan semua data</button><span id="msg" class="mu" role="status"></span></div>
   <p class="sub" style="margin:8px 0 0">${HINT[tab]} Perubahan tersimpan otomatis di browser ini dan seketika masuk ke diagram dan semua halaman. Untuk menyimpan permanen, klik Unduh Excel.</p>
   <div class="tools" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ln)"><b>Edit massal</b><b id="sel" class="mu">0 dipilih</b>
@@ -226,12 +232,12 @@ function vEdit(tab){
   $('eq').oninput=vis;$('fst').onchange=vis;bulkField();live();vis();
 }
 function selUpd(){const n=$('sel');if(n)n.textContent=SEL.size+' dipilih'}
-function bulkField(){const c=COLS[EDS][+$('bf').value];$('bv').innerHTML=cell(c,'',0).replace(/data-i="0" data-k="\w+"/,'id="bval"')}
+function bulkField(){const c=CL()[+$('bf').value];$('bv').innerHTML=cell(c,'',0).replace(/data-i="0" data-k="\w+"/,'id="bval"')}
 function bulkChange(t){
  if(t.dataset.sel!=null){t.checked?SEL.add(+t.dataset.sel):SEL.delete(+t.dataset.sel);selUpd()}
  else if(t.id==='sa'){document.querySelectorAll('#eb tr:not([hidden]) [data-sel]').forEach(c=>{c.checked=t.checked;t.checked?SEL.add(+c.dataset.sel):SEL.delete(+c.dataset.sel)});selUpd()}
  else if(t.id==='bf')bulkField()}
-function bulkApply(){if(!SEL.size)return msg('Pilih baris dulu');const c=COLS[EDS][+$('bf').value],v=$('bval').value,a=DSET(),n=SEL.size;
+function bulkApply(){if(!SEL.size)return msg('Pilih baris dulu');const c=CL()[+$('bf').value],v=$('bval').value,a=DSET(),n=SEL.size;
  SEL.forEach(i=>{a[i][c[0]]=c[2]==='d'?(v||null):v});touch();vEdit();msg(n+' baris diperbarui')}
 function bulkDel(t){if(!SEL.size)return msg('Pilih baris dulu');if(!t.dataset.arm){t.dataset.arm=1;t.textContent='Yakin hapus '+SEL.size+'?';return}
  const a=DSET();[...SEL].sort((x,y)=>y-x).forEach(i=>a.splice(i,1));touch();vEdit()}
@@ -243,29 +249,81 @@ $('v').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)ret
  else if(t.id==='rst'){if(t.dataset.arm){try{localStorage.removeItem('lcc-v2')}catch(x){}location.reload()}else{t.dataset.arm=1;t.textContent='Yakin? Semua data dihapus'}}});
 $('v').addEventListener('change',e=>{const t=e.target;
  if(t.dataset.k!=null){const r=DSET()[+t.dataset.i];r[t.dataset.k]=t.type==='date'?(t.value||null):t.value;touch();const tr=t.closest('tr');if(tr)tr.dataset.st=r.st}
- else if(t.id==='imp')doImport(t.files[0]);else bulkChange(t)});
-const iso=v=>typeof v==='number'&&v>25569?new Date(Math.round((v-25569)*864e5)).toISOString().slice(0,10):(typeof v==='string'&&/^\d{4}-\d\d-\d\d/.test(v)?v.slice(0,10):null);
+ else if(t.id==='imp'){const f=t.files[0];t.value='';doImport(f)}else bulkChange(t)});
 const S=v=>v==null?'':String(v).trim();
+const nz=s=>S(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+const MI={jan:1,feb:2,mar:3,apr:4,mei:5,may:5,jun:6,jul:7,agu:8,aug:8,ags:8,sep:9,okt:10,oct:10,nov:11,des:12,dec:12};
+function toISO(v){let y,m,d,r;if(v==null||v==='')return null;
+ if(typeof v==='number'){if(v<20000||v>80000)return null;const q=new Date(Math.round((v-25569)*864e5));y=q.getUTCFullYear();m=q.getUTCMonth()+1;d=q.getUTCDate()}
+ else{const s=S(v);
+  if(r=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/)){y=+r[1];m=+r[2];d=+r[3]}
+  else if(r=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/)){d=+r[1];m=+r[2];y=+r[3];if(y<100)y+=2000;if(m>12&&d<=12)[d,m]=[m,d]}
+  else if(r=s.match(/^(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/)){d=+r[1];m=MI[r[2].slice(0,3).toLowerCase()];y=+r[3]}}
+ if(!y||!m||!d||m>12||d>31||y<1990||y>2100)return null;return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+const normSt=v=>{const s=nz(v);if(!s||/^(belum|not|todo|open|baru|backlog|new)/.test(s))return 'Not started';if(/complet|selesai|done|closed|finish|beres|tuntas/.test(s))return 'Completed';if(/block|blok|hold|tunda|stuck|pending|kendala/.test(s))return 'Blocked';if(/progress|berjalan|proses|ongoing|wip|dikerjakan|jalan/.test(s))return 'In progress';return 'Not started'};
+const normP=v=>{const s=S(v),m=s.match(/^p?\s*([0-3])$/i);if(m)return 'P'+m[1];const l=s.toLowerCase();return /krit|urgent|critical/.test(l)?'P0':/high|tinggi/.test(l)?'P1':/med|sedang|normal/.test(l)?'P2':/low|rendah/.test(l)?'P3':s.toUpperCase()};
+const SYN={title:['requestlists','requestlist','request','permintaan','judul','tugas','pekerjaan','perihal','uraian','kegiatan','subject'],bu:['businessunit','bu','unitbisnis','perusahaan','company','entitas'],p:['priority','prioritas','prio'],dv:['division','divisi'],dp:['department','departemen','dept'],cat:['category','kategori','jenis','legalframework','framework','tipe','type'],st:['status','statustugas','progress'],sd:['startdate','mulai','tanggalmulai','start','tglmulai','berlakumulai','tanggaldokumen'],ed:['enddate','selesai','tanggalselesai','end','deadline','tglselesai','duedate','tanggalakhir','berakhir','tanggalberakhir','expired','expiry','masaberlaku','validuntil','jatuhtempo'],dl:['deliverable','output','hasil'],note:['notes','note','catatan','keterangan','remark','remarks'],project:['taskproject','project','proyek','namaproyek'],sub:['subtask','subtugas','subproyek','tahapan'],pi:['pi','penyebab','problemidentification','kendala','masalah'],ca:['ca','correctiveaction','tindakan','tindaklanjut'],name:['documentname','namadokumen','dokumen','document','nama'],inst:['instansi','instansi2ndparties','2ndparties','pihakkedua','counterparty','partner','vendor'],file:['file','filename','namafile','berkas','link']};
+function autoMap(hdr,ds){const tr=[];
+ COLS[ds].forEach(c=>hdr.forEach((h,ci)=>{const n=nz(h);if(!n)return;let sc=0;(SYN[c[0]]||[]).forEach(s=>{sc=Math.max(sc,n===s?3:(s.length>=4&&n.includes(s))?2:(n.length>=4&&s.includes(n))?1:0)});if(sc)tr.push([sc,c[0],ci])}));
+ tr.sort((a,b)=>b[0]-a[0]);const m={},u=new Set();tr.forEach(([s,k,ci])=>{if(m[k]==null&&!u.has(ci)){m[k]=ci;u.add(ci)}});return m}
+function hdrRow(aoa){let best=0,bs=-1;const A=aoa.slice(0,15);
+ A.forEach((r,i)=>{const sc=r.filter(c=>{const n=nz(c);return n&&Object.values(SYN).some(a=>a.includes(n))}).length;if(sc>bs){bs=sc;best=i}});
+ if(bs<=0){const i=A.findIndex(r=>r.filter(c=>S(c)).length>=2);return i<0?0:i}return best}
+function guess(sh){const hdr=(sh.aoa[sh.hr]||[]).map(S);let best='skip',bs=0;
+ [['main','title',/main|tracker|request|permintaan/i],['proj','sub',/project|proyek/i],['docs','name',/document|dokumen|doc/i]].forEach(([ds,key,rx])=>{const m=autoMap(hdr,ds),h=rx.test(sh.name);const sc=Object.keys(m).length+(m[key]!=null?3:0)+(h?4:0);if((m[key]!=null||h)&&sc>bs){bs=sc;best=ds}});
+ sh.t=bs>=3?best:'skip';sh.m=sh.t==='skip'?{}:autoMap(hdr,sh.t)}
+const wzRows=sh=>sh.aoa.slice(sh.hr+1).filter(r=>Object.values(sh.m).some(ci=>S(r[ci])!=='')&&!(sh.t==='proj'&&sh.m.sub!=null&&S(r[sh.m.sub])===''));
+let WZ=null;
+function wzClose(){const e=$('wz');if(e)e.remove();WZ=null}
+function wzRender(){const lab={main:'Tracker utama',proj:'Proyek',docs:'Dokumen'};
+ $('wz').innerHTML=`<div class="wzb" role="dialog" aria-label="Impor Excel"><h2>Impor: ${esc(WZ.file)}</h2><p class="sub">Kolom dicocokkan otomatis dari judul kolom di file Anda. Periksa dan ubah bila perlu. SLA, sisa hari, dan umur dihitung otomatis.</p>
+ <div class="tools"><label><input type="radio" name="wm" value="replace"${WZ.mode==='replace'?' checked':''}> Ganti data yang ada</label><label><input type="radio" name="wm" value="append"${WZ.mode==='append'?' checked':''}> Tambahkan ke data yang ada</label><label><input type="checkbox" id="wx"${WZ.extra?' checked':''}> Bawa kolom lain sebagai kolom tambahan</label></div>
+ ${WZ.sheets.map((sh,i)=>{const hdr=(sh.aoa[sh.hr]||[]).map(S);return `<section class="pn" style="margin-top:12px"><div class="tools"><b>${esc(sh.name)}</b><span class="mu">${sh.aoa.length} baris</span>
+ <select class="fi" data-w="t" data-s="${i}" aria-label="Tujuan sheet ${esc(sh.name)}"><option value="skip">Lewati sheet ini</option>${Object.keys(lab).map(d=>`<option value="${d}"${sh.t===d?' selected':''}>Jadikan ${lab[d]}</option>`).join('')}</select>
+ <label class="mu">Baris judul kolom <input type="number" min="1" class="fi" style="width:70px;min-width:0" data-w="h" data-s="${i}" value="${sh.hr+1}"></label>${sh.t!=='skip'?`<b>${wzRows(sh).length} baris akan diimpor</b>`:''}</div>
+ ${sh.t!=='skip'?`<div class="wg">${COLS[sh.t].map(c=>`<label>${c[1]}<select class="fi" data-w="m" data-s="${i}" data-f="${c[0]}"><option value="">(tidak diisi)</option>${hdr.map((h,ci)=>h?`<option value="${ci}"${sh.m[c[0]]===ci?' selected':''}>${esc(h)}</option>`:'').join('')}</select></label>`).join('')}</div>`:''}</section>`}).join('')}
+ <div class="tools" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-w="x">Batal</button><button class="btn on" data-w="go">Impor sekarang</button></div></div>`}
+function wzEvt(e){const t=e.target,w=t.dataset.w;if(!WZ)return;
+ if(t.name==='wm'){WZ.mode=t.value;return}if(t.id==='wx'){WZ.extra=t.checked;return}
+ const sh=WZ.sheets[+t.dataset.s];if(!sh)return;
+ if(w==='t'){sh.t=t.value;sh.m=sh.t==='skip'?{}:autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
+ else if(w==='h'){sh.hr=Math.max(0,(+t.value||1)-1);if(sh.t!=='skip')sh.m=autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
+ else if(w==='m'){if(t.value==='')delete sh.m[t.dataset.f];else sh.m[t.dataset.f]=+t.value;wzRender()}}
+function wzApply(){const done={},out=[],NM={main:'permintaan',proj:'sub-task',docs:'dokumen'};
+ const addU=(a,v)=>{if(v&&!a.includes(v))a.push(v)};
+ WZ.sheets.forEach(sh=>{if(sh.t==='skip')return;const ds=sh.t,A=({main:M,proj:P,docs:DOC})[ds],hdr=(sh.aoa[sh.hr]||[]).map(S),used=new Set(Object.values(sh.m)),body=sh.aoa.slice(sh.hr+1);
+  const ex=[];if(WZ.extra)hdr.forEach((h,ci)=>{if(!h||used.has(ci)||/^(sla|sisa ?hari|age|umur|no\.?|#)$/i.test(h)||(ds==='docs'&&/status/i.test(h)))return;if(body.some(r=>S(r[ci])!==''))ex.push([ci,h])});
+  let cur='';const objs=[];
+  wzRows(sh).forEach(r=>{const o={};COLS[ds].forEach(c=>o[c[0]]=c[2]==='d'?null:'');
+   Object.entries(sh.m).forEach(([k,ci])=>{const c=COLS[ds].find(x=>x[0]===k),v=r[ci];o[k]=c[2]==='d'?toISO(v):k==='st'?normSt(v):k==='p'?normP(v):S(v)});
+   if(ds!=='docs'&&!o.st)o.st='Not started';
+   if(ds==='proj'){if(o.project)cur=o.project;else o.project=cur;if(!o.sub&&sh.m.sub==null)o.sub=o.project;if(!o.sub)return}
+   ex.forEach(([ci,h])=>{if(S(r[ci])!=='')o['x_'+h]=S(r[ci])});objs.push(o)});
+  ex.forEach(([,h])=>addU(EXTRA[ds],h));
+  if(WZ.mode==='replace'&&!done[ds])A.splice(0,A.length);done[ds]=1;
+  objs.forEach(o=>{addU(D.bu,o.bu);addU(D.dvs,o.dv);addU(D.dps,o.dp);if(o.cat&&!D.fw.some(f=>f.n===o.cat))D.fw.push({n:o.cat,d:[]});A.push(o)});
+  out.push(objs.length+' '+NM[ds])});
+ if(!out.length){wzClose();return msg('Tidak ada sheet yang diimpor')}
+ wzClose();touch();vEdit();msg('Impor selesai: '+out.join(', '))}
 async function doImport(f){
-  if(!f)return;if(!window.XLSX)return msg('Pustaka Excel gagal dimuat');
+  if(!f)return;if(!window.XLSX)return msg('Pustaka Excel gagal dimuat. Periksa koneksi internet.');
   try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
-  const rd=(n,r)=>wb.Sheets[n]?XLSX.utils.sheet_to_json(wb.Sheets[n],{range:r,defval:'',raw:true}):null;
-  const sst=v=>ST[S(v)]?S(v):'Not started';const out=[];
-  const m=rd('Main Tracker',0),p=rd('Project',1),d=rd('Document Lists',0);
-  if(m){M.splice(0,M.length,...m.filter(r=>r['Request Lists']||r.Category||r.Status).map(r=>({title:S(r['Request Lists']),bu:S(r['Business Unit']),p:S(r.Priority),dv:S(r.Division),dp:S(r.Department),cat:S(r.Category),st:sst(r.Status),sd:iso(r['Start date']),ed:iso(r['End date']),dl:S(r.Deliverable),note:S(r.Notes)})));out.push(M.length+' permintaan')}
-  if(p){let cur='';P.splice(0,P.length,...p.filter(r=>{if(r['Task Project'])cur=S(r['Task Project']);r.__p=cur;return r['Sub Task']}).map(r=>({project:r.__p,sub:S(r['Sub Task']).replace(/\n/g,' '),bu:S(r['Business Unit']),p:S(r.Priority),dv:S(r.Division),dp:S(r.Department),cat:S(r.Category),st:sst(r.Status),sd:iso(r['Start date']),ed:iso(r['End date']),dl:S(r.Deliverable),note:S(r.Notes),pi:S(r.PI),ca:S(r.CA)})));out.push(P.length+' sub-task')}
-  if(d){DOC.splice(0,DOC.length,...d.filter(r=>r['Document Name']).map(r=>({name:S(r['Document Name']),dv:S(r.Division),dp:S(r.Department),cat:S(r.Category),inst:S(r['Instansi / 2nd Parties']),sd:iso(r['Start date']),ed:iso(r['End date']),file:S(r.File)})));out.push(DOC.length+' dokumen')}
-  if(!out.length)return msg('Sheet Main Tracker, Project, atau Document Lists tidak ditemukan');
-  touch();vEdit();msg('Impor selesai: '+out.join(', '))}catch(x){msg('File tidak bisa dibaca')}
+  const sheets=wb.SheetNames.map(n=>({name:n,aoa:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:true,blankrows:false})})).filter(s=>s.aoa.length);
+  if(!sheets.length)return msg('File kosong');
+  sheets.forEach(s=>{s.hr=hdrRow(s.aoa);guess(s)});
+  WZ={file:f.name,sheets,mode:'replace',extra:true};
+  const w=document.createElement('div');w.id='wz';w.className='wz';document.body.appendChild(w);
+  w.addEventListener('change',wzEvt);w.addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;if(b.dataset.w==='x')wzClose();else if(b.dataset.w==='go')wzApply()});
+  wzRender()}catch(x){msg('File tidak bisa dibaca')}
 }
 async function doExport(){
   if(!window.XLSX)return msg('Pustaka Excel gagal dimuat');
   const z=s=>s?{t:'n',v:Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5+25569,z:'yyyy-mm-dd'}:'';
   const n=v=>v==null?'':v,wb=XLSX.utils.book_new(),add=(nm,r)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),nm);
   const L={'Completed':'✅ Selesai'};
-  add('Main Tracker',[['Request Lists','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes'],...M.map(x=>[x.title,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note])]);
-  add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA'],...P.map(x=>[x.project,x.sub,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca])]);
-  add('Document Lists',[['Document Name','Division','Department','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status'],...DOC.map(x=>[x.name,x.dv,x.dp,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0]])]);
+  add('Main Tracker',[['Request Lists','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes',...EXTRA.main],...M.map(x=>[x.title,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,...EXTRA.main.map(h=>x['x_'+h]||'')])]);
+  add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA',...EXTRA.proj],...P.map(x=>[x.project,x.sub,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca,...EXTRA.proj.map(h=>x['x_'+h]||'')])]);
+  add('Document Lists',[['Document Name','Division','Department','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status',...EXTRA.docs],...DOC.map(x=>[x.name,x.dv,x.dp,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0],...EXTRA.docs.map(h=>x['x_'+h]||'')])]);
   const data=XLSX.write(wb,{bookType:'xlsx',type:'array'}),fn='Legal_Compliance_Task_Tracker_edit.xlsx';
   try{const dl=window.claude&&await claude.use('downloads');if(dl){await dl.save({filename:fn,data});return msg('File disimpan')}}catch(x){if(x&&x.code==='declined')return msg('Unduhan dibatalkan')}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=fn;a.click();msg('File diunduh')
