@@ -135,7 +135,7 @@ $('nav').onclick=e=>{const b=e.target.closest('[data-t]');if(b)go(b.dataset.t)};
 $('v').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go,b.dataset.pre)};
 function go(t,pre){cur=t;
   closeSb();document.querySelectorAll('.nav').forEach(b=>b.dataset.t===t?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));$('ttl').textContent=TT[t];$('stl').textContent=SUBT[t];
-  ({ringkasan:vSum,edit:vEdit,tracker:vTrk,litigasi:vTrk,nonlitigasi:vTrk,blocked:vTrk,proyek:vProj,dokumen:vDoc,kualitas:vQ})[t](PRE[t]?t:pre);$('v').scrollTop=0;
+  ({ringkasan:vSum,edit:vEdit,tracker:vEdit,litigasi:vEdit,nonlitigasi:vEdit,blocked:vEdit,proyek:vEdit,dokumen:vEdit,kualitas:vQ})[t](t);$('v').scrollTop=0;
 }
 
 const PAL=['#2563EB','#059669','#D97706','#E11D48','#7C3AED','#0891B2','#CA8A04','#DB2777','#4D7C0F','#475569'];
@@ -166,56 +166,6 @@ function vSum(){
   ${pn('Business unit',`${M.filter(x=>!x.bu).length} baris belum punya business unit.`,pie(pe(M.filter(x=>x.bu),x=>x.bu)))}${pn('Permintaan per bulan','Menurut tanggal mulai.',pie(pe(M.filter(x=>x.sd),x=>MON[+x.sd.slice(5,7)-1]+' '+x.sd.slice(0,4))))}
   ${pn('Status sub-task proyek',`${new Set(P.map(x=>x.project)).size} proyek.`,pie(stE(pC)))}${pn('Status dokumen',`${DOC.length} dokumen.`,pie(dE(dC)))}</div>`;
 }
-/* tracker */
-let F;
-function vTrk(pre){
-  TAB=pre;F={q:'',st:'ALL',dv:'ALL',p:'ALL',cat:'ALL',bu:'ALL',k:'ALL'};
-  const o=(a,l)=>a.map(x=>`<option value="${esc(x)}">${esc(l?l(x):x)}</option>`).join('');
-  const u=f=>[...new Set(M.map(f))].filter(Boolean).sort();
-  $('v').innerHTML=`<section class="pn" style="padding:12px 16px"><div class="tools"><b id="cnt"></b>
-  <input id="q" class="fi" type="search" placeholder="Cari judul, divisi, kategori, catatan" aria-label="Cari">
-  <select id="st" class="fi" aria-label="Status"><option value="ALL">Semua status</option>${o(SO,k=>ST[k][0])}</select>
-  <select id="cat" class="fi" aria-label="Kategori"><option value="ALL">Semua kategori</option>${o(u(x=>x.cat))}</select>
-  <select id="dv" class="fi" aria-label="Divisi"><option value="ALL">Semua divisi</option>${o(u(x=>x.dv),dvn)}</select>
-  <select id="bu" class="fi" aria-label="Business unit"><option value="ALL">Semua business unit</option>${o(u(x=>x.bu))}</select>
-  <select id="p" class="fi" aria-label="Prioritas"><option value="ALL">Semua prioritas</option>${o(['P0','P1','P2','P3'])}</select>
-  <select id="k" class="fi" aria-label="Kelengkapan"><option value="ALL">Semua data</option><option value="title">Tanpa judul</option><option value="dp">Tanpa departemen</option><option value="ed">Tanpa tanggal selesai</option><option value="sd">Tanpa tanggal mulai</option><option value="od">Lewat tanggal akhir</option></select></div></section>
-  <section class="pn" id="pc"></section><div class="tw"><table><thead><tr><th>Baris</th><th>Permintaan</th><th>Business unit</th><th>Prio</th><th>Divisi</th><th>Departemen</th><th>Kategori</th><th>Status</th><th>Mulai</th><th>Selesai</th><th>SLA / umur</th><th>Deliverable</th><th>Catatan</th></tr></thead><tbody id="tb"></tbody></table><div id="em" class="em" hidden>Tidak ada permintaan yang cocok.</div></div>`;
-  [['q','q','input'],['st','st','change'],['cat','cat','change'],['dv','dv','change'],['bu','bu','change'],['p','p','change'],['k','k','change']].forEach(([i,k,e])=>$(i).addEventListener(e,ev=>{F[k]=ev.target.value;trows()}));
-  $('st').value=F.st;trows();
-}
-function trows(){
-  const q=F.q.trim().toLowerCase();
-  const chk={title:x=>!x.title,dp:x=>!x.dp,ed:x=>!x.ed,sd:x=>!x.sd,od:x=>x.st==='In progress'&&x.ed&&x.ed<D.today};
-  const rs=M.filter(PRE[TAB]).filter(t=>(F.st==='ALL'||t.st===F.st)&&(F.cat==='ALL'||t.cat===F.cat)&&(F.dv==='ALL'||t.dv===F.dv)&&(F.bu==='ALL'||t.bu===F.bu)&&(F.p==='ALL'||t.p===F.p)&&(F.k==='ALL'||chk[F.k](t))&&(!q||[t.title,t.bu,t.dv,t.dp,t.cat,t.note,t.dl,ST[t.st][0]].join(' ').toLowerCase().includes(q)));
-  $('cnt').textContent=rs.length+' permintaan';$('pc').innerHTML=`<div class="g"><div><b>Status</b>${pie(stE(cnt(rs,x=>x.st)),120)}</div><div><b>Prioritas</b>${pie(pe(rs,x=>x.p),120)}</div></div>`;
-  $('tb').innerHTML=rs.map(t=>{const s=t.st==='Completed'?(t.dur!=null?t.dur+' hari':'–'):(t.age!=null?`<span class="warn">umur ${t.age} hari</span>`:'–');
-  return `<tr><td class="mu nu">${t.row}</td><td class="tt">${t.title?esc(t.title):`<span class="nt">Tanpa judul</span>`}</td><td>${esc(t.bu)||'<span class="mu">–</span>'}</td><td>${pr(t.p)}</td><td>${esc(dvn(t.dv))}</td><td>${esc(t.dp)||'<span class="mu">–</span>'}</td><td>${esc(t.cat)}</td><td>${bd(t.st)}</td><td class="nu">${fd(t.sd)}</td><td class="nu">${fd(t.ed)}</td><td class="nu">${s}</td><td>${esc(t.dl)||'<span class="mu">–</span>'}</td><td class="tt" style="font-weight:400">${esc(t.note)||'<span class="mu">–</span>'}</td></tr>`}).join('');
-  $('em').hidden=rs.length>0;
-}
-/* projects */
-function vProj(){
-  const names=[...new Set(P.map(x=>x.project))];
-  $('v').innerHTML=`<section class="pn"><h2>Status sub-task</h2>${pie(stE(pC))}</section><div class="k"><div><b>${P.length}</b><span>Sub-task</span></div>${SO.filter(k=>pC[k]).map(k=>`<div><b style="color:var(--${ST[k][1]})">${pC[k]}</b><span>${ST[k][0]}</span></div>`).join('')}</div>
-  <div class="g">${names.map(n=>{const s=P.filter(x=>x.project===n),c=cnt(s,x=>x.st);
-  return `<section class="pn pj"><div style="display:flex;justify-content:space-between;gap:8px"><h2>${esc(n)}</h2><span class="mu">${c.Completed||0}/${s.length} selesai</span></div>${pie(stE(c),110)}
-  <ul class="sb">${s.map(x=>`<li><div class="r"><b>${esc(x.sub)}</b>${bd(x.st)}</div>
-  <div class="mu" style="font-size:12px">${x.sd?fd(x.sd)+' sampai '+fd(x.ed)+(x.dur!=null?' · '+x.dur+' hari':''):'Tanggal belum diisi'}${x.st!=='Completed'&&x.age!=null?` · <span class="warn">umur ${x.age} hari</span>`:''}</div>
-  <div class="chips">${[x.p&&'Prioritas '+x.p,x.bu,x.dv&&'Divisi '+dvn(x.dv),x.dp,x.cat].filter(Boolean).map(v=>`<span>${esc(v)}</span>`).join('')}${x.dl?`<span>Deliverable: ${esc(x.dl)}</span>`:''}</div>
-  ${x.note||x.pi||x.ca?`<dl>${x.note?`<div><dt>Catatan</dt><dd>${esc(x.note)}</dd></div>`:''}${x.pi?`<div><dt>Penyebab (PI)</dt><dd>${esc(x.pi)}</dd></div>`:''}${x.ca?`<div><dt>Tindakan (CA)</dt><dd>${esc(x.ca)}</dd></div>`:''}</dl>`:''}</li>`).join('')}</ul></section>`}).join('')}</div>
-  <p class="mu" style="font-size:12.5px">Baris sheet Project yang tidak bernama sub-task sama dengan baris Main Tracker, jadi tidak ditampilkan dua kali.</p>`;
-}
-/* documents */
-function vDoc(){
-  $('v').innerHTML=`<div class="k"><div><b>${DOC.length}</b><span>Dokumen</span></div>${Object.keys(DS).filter(k=>dC[k]).map(k=>`<div><b style="color:var(--${DS[k][1]})">${dC[k]}</b><span>${DS[k][0]}</span></div>`).join('')}</div>
-  <section class="pn" id="pc"></section><section class="pn" style="padding:12px 16px"><div class="tools"><b id="cnt"></b><input id="q" class="fi" type="search" placeholder="Cari dokumen, divisi, pihak kedua, file" aria-label="Cari"><select id="s" class="fi" aria-label="Status"><option value="ALL">Semua status</option>${Object.keys(DS).map(k=>`<option value="${k}">${DS[k][0]}</option>`).join('')}</select><select id="i" class="fi" aria-label="Pihak kedua"><option value="ALL">Semua pihak kedua</option>${[...new Set(DOC.map(x=>x.inst))].sort().map(x=>`<option>${esc(x)}</option>`).join('')}</select></div></section>
-  <div class="tw"><table><thead><tr><th>Dokumen</th><th>Divisi</th><th>Departemen</th><th>Kategori</th><th>Pihak kedua</th><th>Mulai</th><th>Berakhir</th><th>Sisa hari</th><th>Status</th><th>File</th></tr></thead><tbody id="tb"></tbody></table><div id="em" class="em" hidden>Tidak ada dokumen yang cocok.</div></div>`;
-  const dr=()=>{const q=$('q').value.toLowerCase(),s=$('s').value,i=$('i').value;
-  const rs=DOC.filter(x=>(s==='ALL'||x.st===s)&&(i==='ALL'||x.inst===i)&&(!q||[x.name,x.dv,x.dp,x.inst,x.cat,x.file].join(' ').toLowerCase().includes(q)));
-  $('cnt').textContent=rs.length+' dokumen';$('pc').innerHTML='<b>Status dokumen</b>'+pie(dE(cnt(rs,x=>x.st)),120);
-  $('tb').innerHTML=rs.map(x=>`<tr><td class="tt">${esc(x.name)}</td><td>${esc(x.dv)}</td><td>${esc(x.dp)||'–'}</td><td>${esc(x.cat)}</td><td>${esc(x.inst)}</td><td class="nu">${fd(x.sd)}</td><td class="nu">${x.ed?fd(x.ed):'<span class="mu">Belum diisi</span>'}${x.bad?'<small class="warn">Lebih awal dari tanggal mulai</small>':''}</td><td class="nu">${x.left==null?'–':x.left+' hari'}</td><td><span class="badge b-${DS[x.st][1]}">${DS[x.st][0]}</span></td><td style="font-size:12px;color:var(--mu);max-width:260px;word-break:break-word">${esc(x.file)||'–'}</td></tr>`).join('');$('em').hidden=rs.length>0};
-  $('q').oninput=dr;$('s').onchange=dr;$('i').onchange=dr;dr();
-}
 /* completeness */
 function vQ(){
   const fill=(a,f)=>a.filter(f).length,pc=(a,f)=>Math.round(fill(a,f)/a.length*100);
@@ -229,7 +179,7 @@ function vQ(){
    ['wip',M.filter(x=>!x.dp).length,'Departemen kosong','Lengkapi kolom Department.'],
    ['wip',M.filter(x=>x.st==='Completed'&&!x.ed).length,'Selesai tanpa tanggal selesai','SLA belum bisa dihitung.'],
    ['wip',M.filter(x=>!x.dl).length,'Deliverable kosong','Isi kolom Deliverable di tab Edit data.'],
-   ['idle',DOC.filter(x=>x.bad).length,'Dokumen dengan tanggal terbalik','End date lebih awal dari Start date.']].filter(a=>a[1]).map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div><b>${a[2]}</b><span>${a[3]}</span></div></li>`).join('')}</ul></section>`;
+   ['idle',DOC.filter(x=>x.bad).length,'Dokumen dengan tanggal terbalik','End date lebih awal dari Start date.']].filter(a=>a[1]).map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${/okumen/.test(a[2])?'dokumen':'tracker'}">Perbaiki</button></li>`).join('')}</ul></section>`;
 }
 
 /* editor */
@@ -247,24 +197,33 @@ function cell(c,v,i){const k=c[0],a=`data-i="${i}" data-k="${k}" aria-label="${c
  if(c[2]==='s'){let L=c[3]();if(v!==''&&!L.includes(v))L=[...L,v];return `<select ${a}><option value=""></option>${L.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${esc(k==='st'&&ST[x]?ST[x][0]:x)}</option>`).join('')}</select>`}
  return `<input type="text" ${a} value="${esc(v)}" style="min-width:${['title','name','sub','note','pi','ca'].includes(k)?230:130}px">`}
 const SEL=new Set();
+let ETAB='edit',EF=null;
+const PREDEF={litigasi:{cat:LIT},blocked:{st:'Blocked'}};
+const HINT={edit:'Pilih data di tombol kiri, lalu ubah langsung di sel.',tracker:'Semua permintaan. Ubah langsung di sel.',litigasi:'Baris baru otomatis berkategori Litigation & Dispute Resolution.',nonlitigasi:'Hanya permintaan di luar litigasi.',blocked:'Baris baru otomatis berstatus Blocked. Ubah status ke Completed untuk mengeluarkan dari antrean.',proyek:'Satu baris per sub-task. Isi kolom Proyek untuk mengelompokkan.',dokumen:'Status dokumen dihitung otomatis dari tanggal berakhir.'};
 function live(){const el=$('live');if(!el)return;
- el.innerHTML=EDS==='main'?`<div class="g"><div><b>Status</b>${pie(stE(cnt(M,x=>x.st)),120)}</div><div><b>Prioritas</b>${pie(pe(M,x=>x.p),120)}</div></div>`:EDS==='proj'?`<b>Status sub-task</b>${pie(stE(cnt(P,x=>x.st)),120)}`:`<b>Status dokumen</b>${pie(dE(cnt(DOC,x=>x.st)),120)}`}
-function vEdit(){
+ const A=EDS==='main'&&EF?M.filter(EF):M,pn=(h,b)=>`<div><b>${h}</b>${b}</div>`;
+ el.innerHTML=`<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">`+(EDS==='main'?pn('Status',pie(stE(cnt(A,x=>x.st)),120))+pn('Prioritas',pie(pe(A,x=>x.p),120))+pn('Divisi',pie(pe(A,x=>dvn(x.dv)),120)):EDS==='proj'?pn('Status sub-task',pie(stE(cnt(P,x=>x.st)),120))+pn('Sub-task per proyek',pie(pe(P,x=>x.project),120)):pn('Status dokumen',pie(dE(cnt(DOC,x=>x.st)),120))+pn('Dokumen per divisi',pie(pe(DOC,x=>x.dv),120)))+`</div>`}
+function vis(){const q=($('eq').value||'').toLowerCase(),s=$('fst').value;let n=0;
+ document.querySelectorAll('#eb tr').forEach(r=>{const h=(q&&!r.dataset.s.includes(q))||(s!=='ALL'&&r.dataset.st!==s);r.hidden=h;if(!h)n++});$('cnt').textContent=n+' baris'}
+function vEdit(tab){
+  tab=tab||ETAB;ETAB=tab;if(tab!=='edit')EDS=({proyek:'proj',dokumen:'docs'})[tab]||'main';
+  EF=PRE[tab]&&tab!=='tracker'?PRE[tab]:null;
   const cols=COLS[EDS],a=DSET();SEL.clear();
+  const so=EDS==='docs'?Object.keys(DS).map(k=>[k,DS[k][0]]):SO.map(k=>[k,ST[k][0]]);
   $('v').innerHTML=`<section class="pn" style="padding:12px 16px"><div class="tools">
-  ${[['main','Tracker utama'],['proj','Proyek'],['docs','Dokumen']].map(([k,l])=>`<button class="btn${k===EDS?' on':''}" data-ds="${k}">${l}</button>`).join('')}
-  <input id="eq" class="fi" type="search" placeholder="Cari baris" aria-label="Cari baris">
+  ${tab==='edit'?[['main','Tracker utama'],['proj','Proyek'],['docs','Dokumen']].map(([k,l])=>`<button class="btn${k===EDS?' on':''}" data-ds="${k}">${l}</button>`).join(''):''}
+  <b id="cnt"></b><input id="eq" class="fi" type="search" placeholder="Cari baris" aria-label="Cari baris">
+  <select id="fst" class="fi" aria-label="Filter status"><option value="ALL">Semua status</option>${so.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select>
   <button class="btn" id="add">+ Tambah baris</button><button class="btn" id="exp">Unduh Excel</button>
   <label class="btn">Impor Excel<input id="imp" type="file" accept=".xlsx,.xls" hidden></label>
   <button class="btn" id="rst">Kosongkan semua data</button><span id="msg" class="mu" role="status"></span></div>
-  <p class="sub" style="margin:8px 0 0">Ubah langsung di sel: tersimpan otomatis di browser ini dan seketika masuk ke diagram dan semua tab. Untuk menyimpan permanen atau membagikan, klik Unduh Excel. Status dokumen, SLA, dan umur dihitung otomatis dari tanggal.</p>
+  <p class="sub" style="margin:8px 0 0">${HINT[tab]} Perubahan tersimpan otomatis di browser ini dan seketika masuk ke diagram dan semua halaman. Untuk menyimpan permanen, klik Unduh Excel.</p>
   <div class="tools" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ln)"><b>Edit massal</b><b id="sel" class="mu">0 dipilih</b>
   <select id="bf" class="fi" aria-label="Kolom yang diubah">${cols.map((c,i)=>`<option value="${i}">${c[1]}</option>`).join('')}</select><span id="bv"></span>
   <button class="btn" id="bap">Terapkan ke yang dipilih</button><button class="btn" id="bdel">Hapus yang dipilih</button></div></section>
-  <section class="pn"><h2>Ringkasan langsung</h2><p class="sub">Diagram berubah seketika saat Anda mengedit.</p><div id="live"></div></section>
-  <div class="tw ed"><table><thead><tr><th><input type="checkbox" id="sa" aria-label="Pilih semua yang tampil"> #</th>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr></thead><tbody id="eb">${a.map((r,i)=>`<tr data-s="${esc(cols.map(c=>r[c[0]]).join(' ').toLowerCase())}"><td class="nu"><input type="checkbox" data-sel="${i}" aria-label="Pilih baris ${i+1}"> <span class="mu">${i+1}</span></td>${cols.map(c=>`<td>${cell(c,r[c[0]],i)}</td>`).join('')}<td><button class="btn" data-del="${i}">Hapus</button></td></tr>`).join('')}</tbody></table></div>`;
-  $('eq').oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#eb tr').forEach(r=>r.hidden=!!q&&!r.dataset.s.includes(q))};
-  bulkField();live();
+  <section class="pn"><h2>Diagram langsung</h2><p class="sub">Berubah seketika saat Anda mengedit.</p><div id="live"></div></section>
+  <div class="tw ed"><table><thead><tr><th><input type="checkbox" id="sa" aria-label="Pilih semua yang tampil"> #</th>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr></thead><tbody id="eb">${a.map((r,i)=>EF&&!EF(r)?'':`<tr data-st="${esc(r.st)}" data-s="${esc(cols.map(c=>r[c[0]]).join(' ').toLowerCase())}"><td class="nu"><input type="checkbox" data-sel="${i}" aria-label="Pilih baris ${i+1}"> <span class="mu">${i+1}</span></td>${cols.map(c=>`<td>${cell(c,r[c[0]],i)}</td>`).join('')}<td><button class="btn" data-del="${i}">Hapus</button></td></tr>`).join('')}</tbody></table></div>`;
+  $('eq').oninput=vis;$('fst').onchange=vis;bulkField();live();vis();
 }
 function selUpd(){const n=$('sel');if(n)n.textContent=SEL.size+' dipilih'}
 function bulkField(){const c=COLS[EDS][+$('bf').value];$('bv').innerHTML=cell(c,'',0).replace(/data-i="0" data-k="\w+"/,'id="bval"')}
@@ -278,12 +237,12 @@ function bulkDel(t){if(!SEL.size)return msg('Pilih baris dulu');if(!t.dataset.ar
  const a=DSET();[...SEL].sort((x,y)=>y-x).forEach(i=>a.splice(i,1));touch();vEdit()}
 $('v').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
  if(t.dataset.ds){EDS=t.dataset.ds;vEdit()}
- else if(t.id==='add'){DSET().push(BLANK[EDS]());touch();vEdit();msg('Baris baru ditambahkan di bawah');const l=$('eb').lastElementChild;l.scrollIntoView();l.querySelector('input').focus()}
+ else if(t.id==='add'){DSET().push(Object.assign(BLANK[EDS](),PREDEF[ETAB]||{}));touch();vEdit();msg('Baris baru ditambahkan di bawah');const l=$('eb').lastElementChild;l.scrollIntoView();l.querySelector('input[type=text]').focus()}
  else if(t.dataset.del!=null){if(t.dataset.arm){DSET().splice(+t.dataset.del,1);touch();vEdit()}else{t.dataset.arm=1;t.textContent='Yakin?'}}
  else if(t.id==='exp')doExport();else if(t.id==='bap')bulkApply();else if(t.id==='bdel')bulkDel(t);
  else if(t.id==='rst'){if(t.dataset.arm){try{localStorage.removeItem('lcc-v2')}catch(x){}location.reload()}else{t.dataset.arm=1;t.textContent='Yakin? Semua data dihapus'}}});
 $('v').addEventListener('change',e=>{const t=e.target;
- if(t.dataset.k!=null){DSET()[+t.dataset.i][t.dataset.k]=t.type==='date'?(t.value||null):t.value;touch()}
+ if(t.dataset.k!=null){const r=DSET()[+t.dataset.i];r[t.dataset.k]=t.type==='date'?(t.value||null):t.value;touch();const tr=t.closest('tr');if(tr)tr.dataset.st=r.st}
  else if(t.id==='imp')doImport(t.files[0]);else bulkChange(t)});
 const iso=v=>typeof v==='number'&&v>25569?new Date(Math.round((v-25569)*864e5)).toISOString().slice(0,10):(typeof v==='string'&&/^\d{4}-\d\d-\d\d/.test(v)?v.slice(0,10):null);
 const S=v=>v==null?'':String(v).trim();
