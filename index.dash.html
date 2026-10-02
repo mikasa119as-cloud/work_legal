@@ -85,9 +85,9 @@ input[type=date]{color-scheme:dark}
 <div class="main"><div class="top"><button id="menu" aria-label="Buka menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div><h1 id="ttl"></h1><p id="stl"></p></div><div class="tools" style="margin-left:auto;gap:6px"><span id="gst" class="mu" style="font-size:12px" role="status"></span><button class="btn" id="un" title="Ctrl+Z">↶ Urungkan</button><button class="btn" id="rd" title="Ctrl+Y">↷ Ulangi</button></div><div class="asof" id="asof"></div></div>
 <main id="v" tabindex="-1"></main></div>
 <script>
-const D={"today":"","main":[],"proj":[],"docs":[],"bu":["PT Eigerindo MPI","PT Eksonindo MPI","PT Dua Puluh Tiga","PT KIND","PT EEN","PT 72425","Owner & Family","Others"],"dvs":["Corporate Strategy","HCGA","ICT","ESG","Marketing","Operation","Horeca","F&A","Procurement","31011","Eiger Camp"],"dps":["Business Process / QMS","Strategy & Planning","Legal & Compliance","General HCGA","OD","TA","L&D","HCBP","Digital","Infrastruktur","Conservation & Environment Protection","Landscape","ESG Performance","Creative","PR & Comm","Offline Partnership","Brand","Traffic & Ticketing","Attraction","Engineering","Environmental Services","General Ops","Accommodation","FB","Kitchen","Merchandise & Retail","Finance","Accounting","Procurement","General","HSE"],"pri":["P0","P1","P2","P3"],"fw":[{"n":"Contract Management","d":[]},{"n":"Compliance & Regulatory / Affairs","d":[]},{"n":"Corporate Governance","d":[]},{"n":"Intelectual Property","d":[]},{"n":"Litigation & Dispute Resolution","d":[]},{"n":"Asset","d":[]},{"n":"Risk Management","d":[]}]};
+const D={"today":"","main":[],"proj":[],"docs":[],"bu":[],"fw":[{"n":"Contract Management","d":[]},{"n":"Compliance & Regulatory / Affairs","d":[]},{"n":"Corporate Governance","d":[]},{"n":"Intelectual Property","d":[]},{"n":"Litigation & Dispute Resolution","d":[]},{"n":"Asset","d":[]},{"n":"Risk Management","d":[]}]};
 const tdy=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};D.today=tdy();
-const DEF=JSON.stringify({bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw,pri:D.pri});let cur='ringkasan';
+const DEF=JSON.stringify({bu:D.bu,fw:D.fw});let cur='ringkasan';
 const $=id=>document.getElementById(id),M=D.main,P=D.proj,DOC=D.docs;
 const SO=['Completed','In progress','Blocked','Not started'];
 const ST={'Completed':['Selesai','ok'],'In progress':['Berjalan','wip'],'Blocked':['Terblokir','bad'],'Not started':['Belum mulai','idle']};
@@ -99,7 +99,6 @@ const fd=s=>{if(!s)return '–';const [y,m,d]=s.split('-');return +d+' '+MON[m-1
 const cnt=(a,f)=>a.reduce((o,x)=>{const k=f(x);o[k]=(o[k]||0)+1;return o},{});
 const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 const f1=n=>n==null?'–':n.toFixed(1).replace('.',',');
-const dvn=d=>d==='31011'?'31011 (perlu dicek)':(d||'');
 let N,C,OK,BK,WIP,SLA,bl,ages,od,dC,pC;
 function fix(){const df=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
 [...M,...P].forEach(x=>{x.dur=x.sd&&x.ed?df(x.sd,x.ed):null;x.age=x.sd&&x.st!=='Completed'?df(x.sd,D.today):null});
@@ -109,13 +108,13 @@ function derive(){N=M.length;C=cnt(M,x=>x.st);OK=C.Completed||0;BK=C.Blocked||0;
 SLA=avg(M.filter(x=>x.st==='Completed'&&x.dur!=null).map(x=>x.dur));bl=M.filter(x=>x.st==='Blocked');ages=bl.map(x=>x.age).filter(x=>x!=null);
 od=M.filter(x=>x.st==='In progress'&&x.ed&&x.ed<D.today);dC=cnt(DOC,x=>x.st);pC=cnt(P,x=>x.st);const nb=document.getElementById('nb');if(nb)nb.textContent=BK}
 const EXTRA={main:[],proj:[],docs:[]};
-try{const s=JSON.parse(localStorage.getItem('lcc-v2')||'null');if(s){M.splice(0,M.length,...s.main);P.splice(0,P.length,...s.proj);DOC.splice(0,DOC.length,...s.docs);if(s.extra)Object.assign(EXTRA,s.extra);if(s.lists){D.bu=s.lists.bu||D.bu;D.dvs=s.lists.dvs||D.dvs;D.dps=s.lists.dps||D.dps;D.fw=s.lists.fw||D.fw;D.pri=s.lists.pri||D.pri}}}catch(e){}
-['bu','dvs','dps','pri'].forEach(k=>D[k]=[...new Set(D[k])]);
+try{const s=JSON.parse(localStorage.getItem('lcc-v3')||'null');if(s){M.splice(0,M.length,...s.main);P.splice(0,P.length,...s.proj);DOC.splice(0,DOC.length,...s.docs);if(s.extra)Object.assign(EXTRA,s.extra);if(s.lists){D.bu=s.lists.bu||D.bu;D.fw=s.lists.fw||D.fw}}}catch(e){}
+D.bu=[...new Set(D.bu)];
 fix();derive();
 const ICON={ringkasan:'<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',tracker:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',litigasi:'<path d="M14 13l-8.5 8.5a2.1 2.1 0 01-3-3L11 10M16 16l6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>',nonlitigasi:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',blocked:'<path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>',proyek:'<path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>',dokumen:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',master:'<path d="M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M10 16v4"/>',kualitas:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/>'};
 const TABS=[['g','Ringkasan'],['ringkasan','Dashboard utama'],['tracker','Tracker utama'],['g','Penanganan'],['litigasi','Litigasi'],['nonlitigasi','Non litigasi'],['blocked','Antrean terblokir'],['g','Proyek dan dokumen'],['proyek','Proyek'],['dokumen','Daftar dokumen'],['g','Kualitas data'],['edit','Edit data'],['master','Kelola daftar'],['kualitas','Catatan data']];
 const TT={ringkasan:'Dashboard utama',tracker:'Tracker utama',litigasi:'Litigasi',nonlitigasi:'Non litigasi',blocked:'Antrean terblokir',proyek:'Proyek',dokumen:'Daftar dokumen',edit:'Edit data',master:'Kelola daftar',kualitas:'Catatan data'};
-const SUBT={ringkasan:'Kondisi permintaan legal dan compliance',tracker:'Semua permintaan di Main Tracker',litigasi:'Kategori Litigation & Dispute Resolution',nonlitigasi:'Permintaan di luar litigasi',blocked:'Permintaan berstatus Blocked',proyek:'Task proyek dan sub-task',dokumen:'Masa berlaku dokumen',edit:'Isi, ubah, tambah, dan hapus data',master:'Tambah, ubah nama, dan hapus pilihan prioritas, divisi, departemen',kualitas:'Kelengkapan kolom dan temuan data'};
+const SUBT={ringkasan:'Kondisi permintaan legal dan compliance',tracker:'Semua permintaan di Main Tracker',litigasi:'Kategori Litigation & Dispute Resolution',nonlitigasi:'Permintaan di luar litigasi',blocked:'Permintaan berstatus Blocked',proyek:'Task proyek dan sub-task',dokumen:'Masa berlaku dokumen',edit:'Isi, ubah, tambah, dan hapus data',master:'Tambah, ubah nama, dan hapus pilihan business unit dan kategori',kualitas:'Kelengkapan kolom dan temuan data'};
 $('nav').innerHTML=TABS.map(x=>x[0]==='g'?`<div class="ngrp">${x[1]}</div>`:`<button class="nav" data-t="${x[0]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[x[0]]}</svg>${x[1]}${x[0]==='blocked'?`<span class="nb" id="nb">${BK}</span>`:''}</button>`).join('');
 const openSb=()=>{$('side').classList.add('on');$('scrim').classList.add('on')},closeSb=()=>{$('side').classList.remove('on');$('scrim').classList.remove('on')};
 $('menu').onclick=openSb;$('scrim').onclick=closeSb;
@@ -184,8 +183,8 @@ $('v').innerHTML=`<section class="pn"><h2>Kelengkapan kolom</h2><p class="sub">P
 ['idle',DOC.filter(x=>x.bad).length,'Dokumen dengan tanggal terbalik','End date lebih awal dari Start date.']].filter(a=>a[1]).map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${/okumen/.test(a[2])?'dokumen':'tracker'}">Perbaiki</button></li>`).join('')}</ul></section>`;
 }
 /* kelola daftar: tambah, ubah nama, hapus. Semua langsung diterapkan ke data */
-const MF={pri:'p',dvs:'dv',dps:'dp',bu:'bu',cat:'cat'};
-const ML=[['pri','Prioritas'],['dvs','Divisi'],['dps','Departemen'],['bu','Business unit'],['cat','Kategori']];
+const MF={bu:'bu',cat:'cat'};
+const ML=[['bu','Business unit'],['cat','Kategori']];
 const mget=k=>k==='cat'?D.fw.map(f=>f.n):D[k];
 const mdel=(k,i)=>{k==='cat'?D.fw.splice(i,1):D[k].splice(i,1)};
 const mset=(k,i,v)=>{k==='cat'?D.fw[i].n=v:D[k][i]=v};
@@ -210,20 +209,20 @@ else if(d.ma){const k=d.ma,v=S($('ma-'+k).value).replace(/\s+/g,' ');if(!v)retur
 if(mget(k).some(x=>x.toLowerCase()===v.toLowerCase())){msg('Sudah ada');return}
 madd(k,v);touch();vMaster();msg('"'+v+'" ditambahkan')}});
 /* editor */
-const common=[['bu','Business unit','s',()=>D.bu],['p','Prio','s',()=>D.pri],['dv','Divisi','s',()=>D.dvs],['dp','Departemen','s',()=>D.dps],['cat','Kategori','s',()=>D.fw.map(f=>f.n)],['st','Status','s',()=>SO],['sd','Mulai','d'],['ed','Selesai','d'],['dl','Deliverable','t'],['note','Catatan','t']];
+const common=[['bu','Business unit','s',()=>D.bu],['cat','Kategori','s',()=>D.fw.map(f=>f.n)],['st','Status','s',()=>SO],['sd','Mulai','d'],['ed','Selesai','d'],['dl','Deliverable','t'],['note','Catatan','t']];
 const COLS={main:[['title','Permintaan','t'],...common],proj:[['project','Proyek','t'],['sub','Sub-task','t'],...common,['pi','PI','t'],['ca','CA','t']],
-docs:[['name','Dokumen','t'],common[2],common[3],common[4],['inst','Pihak kedua','t'],['sd','Mulai','d'],['ed','Berakhir','d'],['file','File','t']]};
+docs:[['name','Dokumen','t'],common[1],['inst','Pihak kedua','t'],['sd','Mulai','d'],['ed','Berakhir','d'],['file','File','t']]};
 const CL=()=>COLS[EDS].concat(EXTRA[EDS].map(n=>['x_'+n,n,'t']));
-const BLANK={main:()=>({title:'',bu:'',p:'P1',dv:'',dp:'',cat:'Contract Management',st:'Not started',sd:null,ed:null,dl:'',note:''}),
-proj:()=>({project:'',sub:'',bu:'',p:'P1',dv:'',dp:'',cat:'Compliance & Regulatory / Affairs',st:'Not started',sd:null,ed:null,dl:'',note:'',pi:'',ca:''}),
-docs:()=>({name:'',dv:'',dp:'',cat:'Contract Management',inst:'',sd:null,ed:null,file:''})};
+const BLANK={main:()=>({title:'',bu:'',cat:'',st:'Not started',sd:null,ed:null,dl:'',note:''}),
+proj:()=>({project:'',sub:'',bu:'',cat:'',st:'Not started',sd:null,ed:null,dl:'',note:'',pi:'',ca:''}),
+docs:()=>({name:'',cat:'',inst:'',sd:null,ed:null,file:''})};
 let EDS='main';const DSET=()=>({main:M,proj:P,docs:DOC})[EDS];
 const msg=s=>{const m=$('msg');if(m)m.textContent=s;$('gst').textContent=s};
-const snap=()=>JSON.stringify({main:M,proj:P,docs:DOC,extra:EXTRA,lists:{bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw,pri:D.pri}});
+const snap=()=>JSON.stringify({main:M,proj:P,docs:DOC,extra:EXTRA,lists:{bu:D.bu,fw:D.fw}});
 let LAST=null;const HIST=[],RED=[];
-function load(j){const s=JSON.parse(j);M.splice(0,M.length,...(s.main||[]));P.splice(0,P.length,...(s.proj||[]));DOC.splice(0,DOC.length,...(s.docs||[]));Object.assign(EXTRA,{main:[],proj:[],docs:[]},s.extra||{});if(s.lists)['bu','dvs','dps','pri','fw'].forEach(k=>{if(s.lists[k])D[k]=s.lists[k]})}
+function load(j){const s=JSON.parse(j);M.splice(0,M.length,...(s.main||[]));P.splice(0,P.length,...(s.proj||[]));DOC.splice(0,DOC.length,...(s.docs||[]));Object.assign(EXTRA,{main:[],proj:[],docs:[]},s.extra||{});if(s.lists)['bu','fw'].forEach(k=>{if(s.lists[k])D[k]=s.lists[k]})}
 const hbtn=()=>{$('un').disabled=!HIST.length;$('rd').disabled=!RED.length};
-function stor(c){try{localStorage.setItem('lcc-v2',c);const d=new Date();msg('Tersimpan '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'))}catch(e){msg('Gagal menyimpan di browser. Unduh cadangan JSON')}}
+function stor(c){try{localStorage.setItem('lcc-v3',c);const d=new Date();msg('Tersimpan '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'))}catch(e){msg('Gagal menyimpan di browser. Unduh cadangan JSON')}}
 function touch(){fix();derive();live();const c=snap();if(c!==LAST){HIST.push(LAST);if(HIST.length>60)HIST.shift();RED.length=0;LAST=c}stor(c);hbtn()}
 function undo(r){const from=r?RED:HIST,to=r?HIST:RED;if(!from.length)return msg(r?'Tidak ada yang diulang':'Tidak ada yang diurungkan');
 to.push(LAST);LAST=from.pop();load(LAST);fix();derive();stor(LAST);hbtn();go(cur);msg(r?'Diulang':'Diurungkan')}
@@ -302,8 +301,7 @@ else if(r=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/)){d=+r[1];m=+r[2];y
 else if(r=s.match(/^(\d{1,2})[\s-]+([A-Za-z]{3,})\.?,?[\s-]+(\d{2,4})/)){d=+r[1];m=MI[r[2].slice(0,3).toLowerCase()];y=+r[3];if(y<100)y+=2000}}
 if(!y||!m||!d||m>12||d>31||y<1990||y>2100)return null;return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
 const normSt=v=>{const s=nz(v);if(!s||/^(belum|not|todo|open|baru|backlog|new)/.test(s))return 'Not started';if(/complet|selesai|done|closed|finish|beres|tuntas/.test(s))return 'Completed';if(/block|blok|hold|tunda|stuck|pending|kendala|waiting/.test(s))return 'Blocked';if(/progress|berjalan|proses|ongoing|wip|dikerjakan|jalan|review/.test(s))return 'In progress';return 'Not started'};
-const normP=v=>{const s=S(v),m=s.match(/^p?\s*([0-3])(?!\d)/i);if(m)return 'P'+m[1];const l=s.toLowerCase();return /krit|urgent|critical/.test(l)?'P0':/high|tinggi/.test(l)?'P1':/med|sedang|normal/.test(l)?'P2':/low|rendah/.test(l)?'P3':s.toUpperCase()};
-const SYN={title:['requestlists','requestlist','request','permintaan','judul','tugas','pekerjaan','perihal','uraian','kegiatan','subject','taskname','task'],bu:['businessunit','bu','unitbisnis','perusahaan','company','entitas'],p:['priority','prioritas','prio'],dv:['division','divisi'],dp:['department','departemen','dept'],cat:['category','kategori','jenis','legalframework','framework','tipe','type'],st:['status','statustugas','progress'],sd:['startdate','mulai','tanggalmulai','start','tglmulai','berlakumulai','tanggaldokumen'],ed:['enddate','selesai','tanggalselesai','end','deadline','tglselesai','duedate','tanggalakhir','berakhir','tanggalberakhir','expired','expiry','masaberlaku','validuntil','jatuhtempo'],dl:['deliverable','output','hasil'],note:['notes','note','catatan','keterangan','remark','remarks'],project:['taskproject','project','proyek','namaproyek'],sub:['subtask','subtugas','subproyek','tahapan'],pi:['pi','penyebab','problemidentification','kendala','masalah'],ca:['ca','correctiveaction','tindakan','tindaklanjut'],name:['documentname','namadokumen','dokumen','document','nama'],inst:['instansi','instansi2ndparties','2ndparties','pihakkedua','counterparty','partner','vendor'],file:['file','filename','namafile','berkas','link']};
+const SYN={title:['requestlists','requestlist','request','permintaan','judul','tugas','pekerjaan','perihal','uraian','kegiatan','subject','taskname','task'],bu:['businessunit','bu','unitbisnis','perusahaan','company','entitas'],cat:['category','kategori','jenis','legalframework','framework','tipe','type'],st:['status','statustugas','progress'],sd:['startdate','mulai','tanggalmulai','start','tglmulai','berlakumulai','tanggaldokumen'],ed:['enddate','selesai','tanggalselesai','end','deadline','tglselesai','duedate','tanggalakhir','berakhir','tanggalberakhir','expired','expiry','masaberlaku','validuntil','jatuhtempo'],dl:['deliverable','output','hasil'],note:['notes','note','catatan','keterangan','remark','remarks'],project:['taskproject','project','proyek','namaproyek'],sub:['subtask','subtugas','subproyek','tahapan'],pi:['pi','penyebab','problemidentification','kendala','masalah'],ca:['ca','correctiveaction','tindakan','tindaklanjut'],name:['documentname','namadokumen','dokumen','document','nama'],inst:['instansi','instansi2ndparties','2ndparties','pihakkedua','counterparty','partner','vendor'],file:['file','filename','namafile','berkas','link']};
 function autoMap(hdr,ds){const tr=[];
 COLS[ds].forEach(c=>hdr.forEach((h,ci)=>{const n=nz(h);if(!n)return;let sc=0;(SYN[c[0]]||[]).forEach(s=>{sc=Math.max(sc,n===s?3:(s.length>=4&&n.includes(s))?2:(n.length>=4&&s.includes(n))?1:0)});if(sc)tr.push([sc,c[0],ci])}));
 tr.sort((a,b)=>b[0]-a[0]);const m={},u=new Set();tr.forEach(([s,k,ci])=>{if(m[k]==null&&!u.has(ci)){m[k]=ci;u.add(ci)}});return m}
@@ -317,7 +315,7 @@ const wzRows=sh=>sh.aoa.slice(sh.hr+1).filter(r=>Object.values(sh.m).some(ci=>S(
 let WZ=null;
 function wzClose(){const e=$('wz');if(e)e.remove();WZ=null}
 function wzRender(){const lab={main:'Tracker utama',proj:'Proyek',docs:'Dokumen'};
-$('wz').innerHTML=`<div class="wzb" role="dialog" aria-label="Impor Excel"><h2>Impor: ${esc(WZ.file)}</h2><p class="sub">Kolom dicocokkan otomatis dari judul kolom di file Anda. Periksa dan ubah bila perlu. SLA, sisa hari, dan umur dihitung otomatis. Nilai divisi, departemen, prioritas, dan business unit yang baru otomatis masuk ke Kelola daftar.</p>
+$('wz').innerHTML=`<div class="wzb" role="dialog" aria-label="Impor Excel"><h2>Impor: ${esc(WZ.file)}</h2><p class="sub">Kolom dicocokkan otomatis dari judul kolom di file Anda. Periksa dan ubah bila perlu. SLA, sisa hari, dan umur dihitung otomatis. Kolom prioritas, divisi, dan departemen diabaikan. Business unit dan kategori yang baru otomatis masuk ke Kelola daftar.</p>
 <div class="tools"><label><input type="radio" name="wm" value="replace"${WZ.mode==='replace'?' checked':''}> Ganti data yang ada</label><label><input type="radio" name="wm" value="append"${WZ.mode==='append'?' checked':''}> Tambahkan ke data yang ada (duplikat dilewati)</label><label><input type="checkbox" id="wx"${WZ.extra?' checked':''}> Bawa kolom lain sebagai kolom tambahan</label></div>
 ${WZ.sheets.map((sh,i)=>{const hdr=(sh.aoa[sh.hr]||[]).map(S);return `<section class="pn" style="margin-top:12px"><div class="tools"><b>${esc(sh.name)}</b><span class="mu">${sh.aoa.length} baris</span>
 <select class="fi" data-w="t" data-s="${i}" aria-label="Tujuan sheet ${esc(sh.name)}"><option value="skip">Lewati sheet ini</option>${Object.keys(lab).map(d=>`<option value="${d}"${sh.t===d?' selected':''}>Jadikan ${lab[d]}</option>`).join('')}</select>
@@ -333,20 +331,20 @@ else if(w==='m'){if(t.value==='')delete sh.m[t.dataset.f];else sh.m[t.dataset.f]
 function wzApply(){const done={},out=[],NM={main:'permintaan',proj:'sub-task',docs:'dokumen'};
 const addU=(a,v)=>{if(v&&!a.includes(v))a.push(v)};
 WZ.sheets.forEach(sh=>{if(sh.t==='skip')return;const ds=sh.t,A=({main:M,proj:P,docs:DOC})[ds],hdr=(sh.aoa[sh.hr]||[]).map(S),used=new Set(Object.values(sh.m)),body=sh.aoa.slice(sh.hr+1);
-const ex=[];if(WZ.extra)hdr.forEach((h,ci)=>{if(!h||used.has(ci)||/^(sla|sisa ?hari|age|umur|no\.?|#)$/i.test(h)||(ds==='docs'&&/status/i.test(h)))return;if(body.some(r=>S(r[ci])!==''))ex.push([ci,h])});
+const ex=[];if(WZ.extra)hdr.forEach((h,ci)=>{if(!h||used.has(ci)||/^(sla|sisa ?hari|age|umur|no\.?|#|priority|prioritas|prio|division|divisi|department|departemen|dept)$/i.test(h)||(ds==='docs'&&/status/i.test(h)))return;if(body.some(r=>S(r[ci])!==''))ex.push([ci,h])});
 let cur='';const objs=[];
 wzRows(sh).forEach(r=>{const o={};COLS[ds].forEach(c=>o[c[0]]=c[2]==='d'?null:'');
-Object.entries(sh.m).forEach(([k,ci])=>{const c=COLS[ds].find(x=>x[0]===k),v=r[ci];o[k]=c[2]==='d'?toISO(v):k==='st'?normSt(v):k==='p'?normP(v):S(v)});
+Object.entries(sh.m).forEach(([k,ci])=>{const c=COLS[ds].find(x=>x[0]===k),v=r[ci];o[k]=c[2]==='d'?toISO(v):k==='st'?normSt(v):S(v)});
 if(ds!=='docs'&&!o.st)o.st='Not started';
 if(ds==='proj'){if(o.project)cur=o.project;else o.project=cur;if(!o.sub&&sh.m.sub==null)o.sub=o.project;if(!o.sub)return}
 ex.forEach(([ci,h])=>{if(S(r[ci])!=='')o['x_'+h]=S(r[ci])});objs.push(o)});
 ex.forEach(([,h])=>addU(EXTRA[ds],h));
 if(WZ.mode==='replace'&&!done[ds])A.splice(0,A.length);done[ds]=1;
 let skip=0;const key=o=>[o.title||o.name||(o.project+'|'+o.sub),o.sd,o.ed].join('~').toLowerCase(),seen=new Set(WZ.mode==='append'?A.map(key):[]);
-objs.forEach(o=>{o.bu=canon(D.bu,o.bu);o.dv=canon(D.dvs,o.dv);o.dp=canon(D.dps,o.dp);if(o.p!==undefined)o.p=canon(D.pri,o.p);
+objs.forEach(o=>{o.bu=canon(D.bu,o.bu);
 if(o.cat){const f=D.fw.find(f=>nz(f.n)===nz(o.cat));if(f)o.cat=f.n;else D.fw.push({n:o.cat,d:[]})}
 const kk=key(o);if(WZ.mode==='append'&&seen.has(kk)){skip++;return}seen.add(kk);
-addU(D.bu,o.bu);addU(D.dvs,o.dv);addU(D.dps,o.dp);addU(D.pri,o.p);A.push(o)});
+addU(D.bu,o.bu);A.push(o)});
 out.push((objs.length-skip)+' '+NM[ds]+(skip?' ('+skip+' duplikat dilewati)':''))});
 if(!out.length){wzClose();return msg('Tidak ada sheet yang diimpor')}
 wzClose();touch();vEdit();msg('Impor selesai: '+out.join(', '))}
@@ -365,9 +363,9 @@ async function doExport(){
 if(!window.XLSX)return msg('Pustaka Excel gagal dimuat');
 const z=s=>s?{t:'n',v:Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5+25569,z:'yyyy-mm-dd'}:'';
 const n=v=>v==null?'':v,wb=XLSX.utils.book_new(),add=(nm,r)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),nm);
-add('Main Tracker',[['Request Lists','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes',...EXTRA.main],...M.map(x=>[x.title,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,...EXTRA.main.map(h=>x['x_'+h]||'')])]);
-add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA',...EXTRA.proj],...P.map(x=>[x.project,x.sub,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca,...EXTRA.proj.map(h=>x['x_'+h]||'')])]);
-add('Document Lists',[['Document Name','Division','Department','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status',...EXTRA.docs],...DOC.map(x=>[x.name,x.dv,x.dp,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0],...EXTRA.docs.map(h=>x['x_'+h]||'')])]);
+add('Main Tracker',[['Request Lists','Business Unit','Category','Status','Start date','End date','SLA','Deliverable','Notes',...EXTRA.main],...M.map(x=>[x.title,x.bu,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,...EXTRA.main.map(h=>x['x_'+h]||'')])]);
+add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA',...EXTRA.proj],...P.map(x=>[x.project,x.sub,x.bu,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca,...EXTRA.proj.map(h=>x['x_'+h]||'')])]);
+add('Document Lists',[['Document Name','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status',...EXTRA.docs],...DOC.map(x=>[x.name,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0],...EXTRA.docs.map(h=>x['x_'+h]||'')])]);
 const data=XLSX.write(wb,{bookType:'xlsx',type:'array'}),fn='Legal_Compliance_Task_Tracker_edit.xlsx';
 try{const dl=window.claude&&await claude.use('downloads');if(dl){await dl.save({filename:fn,data});return msg('File disimpan')}}catch(x){if(x&&x.code==='declined')return msg('Unduhan dibatalkan')}
 const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=fn;a.click();msg('File diunduh')
