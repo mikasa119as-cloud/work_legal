@@ -5,21 +5,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#EEF1F6;--sf:#fff;--sf2:#F5F7FB;--ln:#E1E7F0;--tx:#0F172A;--mu:#55657D;--navy:#0D2143;--gold:#E5BA73;
---ok:#047857;--wip:#B45309;--bad:#DC2626;--idle:#64748B;--okb:#ECFDF5;--wipb:#FFFBEB;--badb:#FEF2F2;--idleb:#F1F5F9;--info:#1D4ED8;
---cok:#059669;--cwip:#D97706;--cbad:#E11D48;--cidle:#94A3B8}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070D19;--sf:#0E1A2E;--sf2:#12233A;--ln:#1E3350;--tx:#E6ECF5;--mu:#9CABC1;--ok:#34D399;--wip:#FBBF24;--bad:#F87171;--idle:#94A3B8;--okb:#0B2A22;--wipb:#2B2210;--badb:#2E1517;--idleb:#16263C;--info:#93C5FD;--cok:#10B981;--cwip:#F59E0B;--cbad:#F43F5E;--cidle:#64748B}}
-:root[data-theme="dark"]{--bg:#070D19;--sf:#0E1A2E;--sf2:#12233A;--ln:#1E3350;--tx:#E6ECF5;--mu:#9CABC1;--ok:#34D399;--wip:#FBBF24;--bad:#F87171;--idle:#94A3B8;--okb:#0B2A22;--wipb:#2B2210;--badb:#2E1517;--idleb:#16263C;--info:#93C5FD;--cok:#10B981;--cwip:#F59E0B;--cbad:#F43F5E;--cidle:#64748B}
+color-scheme:dark;--bg:#050A14;--sf:#0B1527;--sf2:#101E36;--ln:#1B2D4A;--tx:#E6ECF5;--mu:#93A3BB;--navy:#14284A;--gold:#E5BA73;
+--ok:#34D399;--wip:#FBBF24;--bad:#F87171;--idle:#94A3B8;--okb:#0B2A22;--wipb:#2B2210;--badb:#2E1517;--idleb:#14233B;--info:#7DB2FF;
+--cok:#10B981;--cwip:#F59E0B;--cbad:#F43F5E;--cidle:#64748B}
+@media(prefers-color-scheme:dark){:root:not([data-theme="x"]){--bg:#050A14;--sf:#0B1527;--sf2:#101E36;--ln:#1B2D4A;--tx:#E6ECF5;--mu:#93A3BB;--ok:#34D399;--wip:#FBBF24;--bad:#F87171;--idle:#94A3B8;--okb:#0B2A22;--wipb:#2B2210;--badb:#2E1517;--idleb:#16263C;--info:#93C5FD;--cok:#10B981;--cwip:#F59E0B;--cbad:#F43F5E;--cidle:#64748B}}
+:root[data-theme="dark"]{--bg:#050A14;--sf:#0B1527;--sf2:#101E36;--ln:#1B2D4A;--tx:#E6ECF5;--mu:#93A3BB;--ok:#34D399;--wip:#FBBF24;--bad:#F87171;--idle:#94A3B8;--okb:#0B2A22;--wipb:#2B2210;--badb:#2E1517;--idleb:#16263C;--info:#93C5FD;--cok:#10B981;--cwip:#F59E0B;--cbad:#F43F5E;--cidle:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
 html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{height:100%;display:flex;flex-direction:row;overflow:hidden;background:var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+body{height:100%;display:flex;flex-direction:row;overflow:hidden;background:radial-gradient(1200px 600px at 80% -10%,#0F2347 0%,transparent 60%),var(--bg);color:var(--tx);font:14px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
 button,input,select{font:inherit;color:inherit}
-header{background:var(--navy);color:#fff;padding:12px 20px 0;flex-shrink:0}
-header h1{font-size:17px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-header h1 small{font-size:12px;font-weight:600;color:#B7C3D6}
-nav{display:flex;gap:4px;overflow-x:auto;margin-top:10px}
-nav button{border:0;background:none;color:#A9B7CB;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
-nav button[aria-current]{color:#fff;border-color:var(--gold)}
 #v{flex:1;overflow-y:auto;padding:20px}
 #v>*+*{margin-top:16px}
 .pn{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px}
@@ -31,39 +25,30 @@ nav button[aria-current]{color:#fff;border-color:var(--gold)}
 .hero{background:linear-gradient(135deg,#040A15,var(--navy));color:#fff;border-radius:16px;padding:22px}
 .big{font-size:56px;font-weight:800;color:var(--gold);line-height:1}
 .seg{display:flex;gap:2px;height:10px;border-radius:9px;overflow:hidden;background:var(--idleb);margin-top:8px}
-.seg i{display:block}.s-ok{background:var(--cok)}.s-wip{background:var(--cwip)}.s-bad{background:var(--cbad)}.s-idle{background:var(--cidle)}
 .bl{list-style:none}.bl li{padding:8px 0;border-bottom:1px solid var(--ln)}.bl li:last-child{border:0}
-.bl .h{display:flex;justify-content:space-between;gap:8px;font-size:13px}.bl .h span{color:var(--mu);white-space:nowrap}
+.bl .h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}.bl .h span{color:var(--mu)}
 .badge{display:inline-block;padding:1px 9px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
 .b-ok{background:var(--okb);color:var(--ok)}.b-wip{background:var(--wipb);color:var(--wip)}.b-bad{background:var(--badb);color:var(--bad)}.b-idle{background:var(--idleb);color:var(--idle)}
-.pri{padding:1px 7px;border-radius:6px;font-size:11.5px;font-weight:800;background:var(--sf2);border:1px solid var(--ln)}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .fi{border:1px solid var(--ln);background:var(--sf2);border-radius:9px;padding:7px 10px;min-width:0}
-input.fi{flex:1;min-width:200px;max-width:320px}
+input.fi{flex:1;min-width:160px;max-width:320px}
 .tw{overflow:auto;max-height:calc(100vh - 260px);border:1px solid var(--ln);border-radius:14px;background:var(--sf)}
 table{width:100%;border-collapse:collapse}
 th{position:sticky;top:0;background:var(--sf);text-align:left;padding:9px 12px;font-size:12px;color:var(--mu);border-bottom:1px solid var(--ln);white-space:nowrap}
 td{padding:9px 12px;border-bottom:1px solid var(--ln);font-size:13px;vertical-align:top}
 tbody tr:hover td{background:var(--sf2)}
-.tt{min-width:220px;max-width:340px;font-weight:600}.tt small,td small{display:block;font-weight:400;color:var(--mu);font-size:12px}
-.nt{color:var(--mu);font-style:italic;font-weight:500}.nu{white-space:nowrap;font-variant-numeric:tabular-nums}
-.warn{color:var(--wip);font-weight:700}.mu{color:var(--mu)}
-.pj h2{font-size:16px}.sb{list-style:none;margin-top:10px}
-.sb li{padding:11px 0;border-top:1px solid var(--ln)}
-.sb .r{display:flex;justify-content:space-between;gap:10px}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}.chips span{font-size:11.5px;background:var(--sf2);border:1px solid var(--ln);border-radius:7px;padding:1px 8px;color:var(--mu)}
-dl{margin-top:8px;background:var(--wipb);border-radius:10px;padding:9px 12px;font-size:12.5px;display:grid;gap:6px}dt{font-weight:700;font-size:12px;color:var(--wip)}dd{margin:0}
-.fw{white-space:pre-line;font-size:12.5px;color:var(--mu);margin-top:6px}
-.lst{display:flex;flex-wrap:wrap;gap:6px}.lst span{background:var(--sf2);border:1px solid var(--ln);border-radius:8px;padding:3px 10px;font-size:12.5px}
+.nu{white-space:nowrap;font-variant-numeric:tabular-nums}.mu{color:var(--mu)}
 .att{list-style:none}.att li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--ln)}.att li:last-child{border:0}
 .att .n{min-width:44px;text-align:center;font-size:18px;font-weight:800;border-radius:9px;height:fit-content;padding:2px 0}
 .att .n.bad{background:var(--badb);color:var(--bad)}.att .n.wip{background:var(--wipb);color:var(--wip)}.att .n.idle{background:var(--idleb);color:var(--idle)}
 .att span{display:block;font-size:12.5px;color:var(--mu)}
 .link{border:0;background:none;color:var(--info);font-weight:700;cursor:pointer}
-.em{padding:40px;text-align:center;color:var(--mu)}
 .pie{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.pie ul{list-style:none;flex:1;min-width:150px}.pie li{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:2px 0}.pie li i{width:10px;height:10px;border-radius:3px;flex-shrink:0}.pie li b{margin-left:auto}.pie li span{color:var(--mu);min-width:36px;text-align:right}
 .btn{border:1px solid var(--ln);background:var(--sf);border-radius:9px;padding:6px 12px;font-weight:700;font-size:12.5px;cursor:pointer;display:inline-block}
-.btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.on{background:var(--navy);color:#fff;border-color:var(--gold)}
+.pn,.k div{box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.25)}
+.top{background:rgba(11,21,39,.85);backdrop-filter:blur(8px)}
+input[type=date]{color-scheme:dark}
 .ed td{padding:4px 6px}.ed input[type=text],.ed input[type=date],.ed select{width:100%;padding:5px 7px;font-size:12.5px;border:1px solid var(--ln);background:var(--sf2);border-radius:6px}.ed select{min-width:110px}
 .side{width:250px;flex-shrink:0;background:linear-gradient(180deg,#040A15,#0A1931 60%,#0D2143);color:#CBD5E1;display:flex;flex-direction:column;z-index:40;transition:transform .25s}
 .brand{display:flex;gap:12px;align-items:center;padding:18px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
@@ -81,253 +66,312 @@ dl{margin-top:8px;background:var(--wipb);border-radius:10px;padding:9px 12px;fon
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .top{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--sf);border-bottom:1px solid var(--ln);flex-shrink:0}
 .top h1{font-size:17px}.top p{font-size:12px;color:var(--mu)}
-.asof{margin-left:auto;font-size:12px;font-weight:700;color:var(--mu);background:var(--sf2);border:1px solid var(--ln);border-radius:99px;padding:5px 12px;white-space:nowrap}
+.btn:disabled{opacity:.4;cursor:default}
+@media(max-width:1023px){#gst{display:none}}
+.asof{font-size:12px;font-weight:700;color:var(--mu);background:var(--sf2);border:1px solid var(--ln);border-radius:99px;padding:5px 12px;white-space:nowrap}
 #menu{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--ln);background:var(--sf);cursor:pointer;place-items:center}#menu svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 @media(max-width:1023px){.side{position:fixed;inset:0 auto 0 0;transform:translateX(-100%);padding-top:env(safe-area-inset-top,0px)}.side.on{transform:none}#menu{display:grid}.top{padding:10px 16px}.asof{display:none}}
 .wz{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 16px 24px}
 .wzb{background:var(--bg);border-radius:16px;max-width:980px;margin:0 auto;padding:20px;border:1px solid var(--ln)}
 .wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:12px}.wg label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mu);font-weight:700}.wg select{width:100%}
-@media(max-width:820px){.g{grid-template-columns:1fr}#v{padding:14px}.tw{max-height:none}header{padding:10px 14px 0}}
+@media(max-width:820px){.g{grid-template-columns:1fr}#v{padding:14px}.tw{max-height:none}}
 </style></head><body>
 <div id="scrim"></div>
 <aside class="side" id="side" aria-label="Navigasi utama">
- <div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 006 0zM18 7l-3 7a3 3 0 006 0z"/></svg></div><div><b>Legal Command Center</b><span>Legal &amp; Compliance</span></div></div>
- <div id="nav"></div>
- <div class="sfoot"><b>Tim Legal</b>Isi dan ubah data lewat menu Edit data. Data tersimpan di browser ini.</div>
+<div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 006 0zM18 7l-3 7a3 3 0 006 0z"/></svg></div><div><b>Legal Command Center</b><span>Legal &amp; Compliance</span></div></div>
+<div id="nav"></div>
+<div class="sfoot"><b>Tim Legal</b>Isi dan ubah data lewat menu Edit data. Data tersimpan di browser ini.</div>
 </aside>
-<div class="main"><div class="top"><button id="menu" aria-label="Buka menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div><h1 id="ttl"></h1><p id="stl"></p></div><div class="asof" id="asof"></div></div>
+<div class="main"><div class="top"><button id="menu" aria-label="Buka menu"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button><div><h1 id="ttl"></h1><p id="stl"></p></div><div class="tools" style="margin-left:auto;gap:6px"><span id="gst" class="mu" style="font-size:12px" role="status"></span><button class="btn" id="un" title="Ctrl+Z">↶ Urungkan</button><button class="btn" id="rd" title="Ctrl+Y">↷ Ulangi</button></div><div class="asof" id="asof"></div></div>
 <main id="v" tabindex="-1"></main></div>
 <script>
-const D={"today": "2026-09-30", "main": [], "proj": [], "docs": [], "bu": ["PT Eigerindo MPI", "PT Eksonindo MPI", "PT Dua Puluh Tiga", "PT KIND", "PT EEN", "PT 72425", "Owner & Family", "Others"], "dvs": ["Corporate Strategy", "HCGA", "ICT", "ESG", "Marketing", "Operation", "Horeca", "F&A", "Procurement", "31011", "Eiger Camp"], "dps": ["Business Process / QMS", "Strategy & Planning", "Legal & Compliance", "General HCGA", "OD", "TA", "L&D", "HCBP", "Digital", "Infrastruktur", "Conservation & Environment Protection", "Landscape", "ESG Performance", "Digital", "Creative", "PR & Comm", "Offline Partnership", "Brand", "Traffic & Ticketing", "Attraction", "Engineering", "Environmental Services", "General Ops", "Accommodation", "FB", "Kitchen", "Merchandise & Retail", "Finance", "Accounting", "Procurement", "General", "HSE"], "fw": [{"n": "Contract Management", "d": ["1. Kontrak Vendor & Pengadaan (Vendor/Procurement Contracts): Review NDA, Master Service Agreement (MSA), Purchase Order (PO) dengan pihak ketiga.\n\n2. Kontrak Eksternal B2B & Kemitraan (Commercial/Partnership Agreements): Kontrak kerjasama strategis, joint venture, kolaborasi komersial, atau sponsorship.\n\n3. Kontrak Internal & Hubungan Industrial (Internal & Corporate HR): Review PKWT/PKWTT, kebijakan internal (Peraturan Perusahaan), NDA karyawan, atau perjanjian mutasi internal.\n\n4. Template & Archetype Standardisasi: Penyusunan, pembaruan, dan pengelolaan standard template (kontrak baku) agar tim bisnis bisa menggunakan draft awal secara mandiri."]}, {"n": "Compliance & Regulatory / Affairs", "d": ["1. Hubungan & Perizinan Pemerintah (Government & Regulatory Licensing): Pengurusan dan perpanjangan NIB, izin usaha khusus, AMDAL/UKL-UPL, izin operasional kawasan, atau pelaporan berkala ke instansi pemerintah (LKPM, dll.).\n\n2. Sertifikasi Teknis & Standardisasi: Tracker untuk sertifikasi industri, keselamatan kerja (K3), sertifikasi SNI, ISO, atau sertifikasi kelayakan fasilitas.\n\n3. Kepatuhan Privasi Data & Keamanan Informasi: Pemenuhan regulasi terkait perlindungan data pribadi (PDP) konsumen maupun internal.\n\n4. Kepatuhan internal (Internal Compliance & Audit Legal): Sosialisasi regulasi baru ke divisi lain dan audit kepatuhan internal terhadap SOP yang berlaku."]}, {"n": "Corporate Governance", "d": ["1. Dokumentasi RUPS & Direksi: Persiapan, risalah, dan keputusan Rapat Umum Pemegang Saham (RUPS), Rapat Direksi (BOD), atau Dewan Komisaris.\n\n2. Legalitas Perusahaan (Corporate Documents): Pengelolaan Akta Pendirian, Akta Perubahan (direksi/modal), Surat Keputusan Kemenkumham, dan pendaftaran ke Berita Negara.\n\n3. Restrukturisasi & Aksi Korporasi: Pengurusan legalitas jika ada pembentukan anak usaha baru, investasi, merger, atau akuisisi (M&A)."]}, {"n": "Intelectual Property", "d": ["1. Pendaftaran & Proteksi Merek: Pendaftaran merek dagang (trademark), logo, hak cipta produk, atau paten teknologi baru ke DJKI.\n\n2. Perpanjangan & Monitoring IP: Tracker masa berlaku merek (biasanya 10 tahun) dan monitoring jika ada pelanggaran penggunaan merek oleh pihak eksternal."]}, {"n": "Litigation & Dispute Resolution", "d": ["1. Dispute & Somasi: Penanganan klaim, tuntutan dari konsumen/pihak ketiga, atau penerbitan somasi kepada pihak yang wanprestasi.\n\n2. Manajemen Litigasi (Jika ada kasus hukum): Koordinasi dengan external counsel (law firm), persidangan, atau mediasi."]}, {"n": "Asset", "d": []}, {"n": "Risk Management", "d": ["1. Surat Pemberitahuan", "2. Surat Korespondensi", "3. Surat Undangan", "4. Surat Edaran", "5. Surat Pernyataan"]}]};
+const D={"today":"","main":[],"proj":[],"docs":[],"bu":["PT Eigerindo MPI","PT Eksonindo MPI","PT Dua Puluh Tiga","PT KIND","PT EEN","PT 72425","Owner & Family","Others"],"dvs":["Corporate Strategy","HCGA","ICT","ESG","Marketing","Operation","Horeca","F&A","Procurement","31011","Eiger Camp"],"dps":["Business Process / QMS","Strategy & Planning","Legal & Compliance","General HCGA","OD","TA","L&D","HCBP","Digital","Infrastruktur","Conservation & Environment Protection","Landscape","ESG Performance","Creative","PR & Comm","Offline Partnership","Brand","Traffic & Ticketing","Attraction","Engineering","Environmental Services","General Ops","Accommodation","FB","Kitchen","Merchandise & Retail","Finance","Accounting","Procurement","General","HSE"],"pri":["P0","P1","P2","P3"],"fw":[{"n":"Contract Management","d":[]},{"n":"Compliance & Regulatory / Affairs","d":[]},{"n":"Corporate Governance","d":[]},{"n":"Intelectual Property","d":[]},{"n":"Litigation & Dispute Resolution","d":[]},{"n":"Asset","d":[]},{"n":"Risk Management","d":[]}]};
 const tdy=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};D.today=tdy();
-let cur='ringkasan';
+const DEF=JSON.stringify({bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw,pri:D.pri});let cur='ringkasan';
 const $=id=>document.getElementById(id),M=D.main,P=D.proj,DOC=D.docs;
 const SO=['Completed','In progress','Blocked','Not started'];
 const ST={'Completed':['Selesai','ok'],'In progress':['Berjalan','wip'],'Blocked':['Terblokir','bad'],'Not started':['Belum mulai','idle']};
 const DS={expired:['Kedaluwarsa','bad'],soon:['Segera berakhir','wip'],active:['Aktif','ok'],noend:['Tanpa tanggal berakhir','idle']};
 const LIT='Litigation & Dispute Resolution',MON=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const PRE={tracker:()=>true,litigasi:x=>x.cat===LIT,nonlitigasi:x=>x.cat!==LIT,blocked:x=>x.st==='Blocked'};let TAB='tracker';
+const PRE={tracker:()=>true,litigasi:x=>x.cat===LIT,nonlitigasi:x=>x.cat!==LIT,blocked:x=>x.st==='Blocked'};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fd=s=>{if(!s)return '–';const [y,m,d]=s.split('-');return +d+' '+MON[m-1]+' '+y};
 const cnt=(a,f)=>a.reduce((o,x)=>{const k=f(x);o[k]=(o[k]||0)+1;return o},{});
 const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 const f1=n=>n==null?'–':n.toFixed(1).replace('.',',');
-const dvn=d=>d==='31011'?'31011 (perlu dicek)':(d||'–');
-const bd=k=>`<span class="badge b-${ST[k][1]}">${ST[k][0]}</span>`;
-const pr=p=>`<span class="pri">${esc(p||'–')}</span>`;
-const seg=c=>`<div class="seg">`+SO.filter(k=>c[k]).map(k=>`<i class="s-${ST[k][1]}" style="flex:${c[k]}"></i>`).join('')+`</div>`;
+const dvn=d=>d==='31011'?'31011 (perlu dicek)':(d||'');
 let N,C,OK,BK,WIP,SLA,bl,ages,od,dC,pC;
 function fix(){const df=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
- [...M,...P].forEach(x=>{x.dur=x.sd&&x.ed?df(x.sd,x.ed):null;x.age=x.sd&&x.st!=='Completed'?df(x.sd,D.today):null});
- DOC.forEach(x=>{x.left=x.ed?df(D.today,x.ed):null;x.st=x.left==null?'noend':x.left<0?'expired':x.left<=90?'soon':'active';x.bad=!!(x.sd&&x.ed&&x.ed<x.sd)});
- M.forEach((x,k)=>x.row=k+2)}
+[...M,...P].forEach(x=>{x.dur=x.sd&&x.ed?df(x.sd,x.ed):null;x.age=x.sd&&x.st!=='Completed'?df(x.sd,D.today):null});
+DOC.forEach(x=>{x.left=x.ed?df(D.today,x.ed):null;x.st=x.left==null?'noend':x.left<0?'expired':x.left<=90?'soon':'active';x.bad=!!(x.sd&&x.ed&&x.ed<x.sd)});
+M.forEach((x,k)=>x.row=k+2)}
 function derive(){N=M.length;C=cnt(M,x=>x.st);OK=C.Completed||0;BK=C.Blocked||0;WIP=C['In progress']||0;
- SLA=avg(M.filter(x=>x.st==='Completed'&&x.dur!=null).map(x=>x.dur));bl=M.filter(x=>x.st==='Blocked');ages=bl.map(x=>x.age).filter(x=>x!=null);
- od=M.filter(x=>x.st==='In progress'&&x.ed&&x.ed<D.today);dC=cnt(DOC,x=>x.st);pC=cnt(P,x=>x.st);const nb=document.getElementById('nb');if(nb)nb.textContent=BK}
-try{const s=JSON.parse(localStorage.getItem('lcc-v2')||'null');if(s){M.splice(0,M.length,...s.main);P.splice(0,P.length,...s.proj);DOC.splice(0,DOC.length,...s.docs)}}catch(e){}
+SLA=avg(M.filter(x=>x.st==='Completed'&&x.dur!=null).map(x=>x.dur));bl=M.filter(x=>x.st==='Blocked');ages=bl.map(x=>x.age).filter(x=>x!=null);
+od=M.filter(x=>x.st==='In progress'&&x.ed&&x.ed<D.today);dC=cnt(DOC,x=>x.st);pC=cnt(P,x=>x.st);const nb=document.getElementById('nb');if(nb)nb.textContent=BK}
+const EXTRA={main:[],proj:[],docs:[]};
+try{const s=JSON.parse(localStorage.getItem('lcc-v2')||'null');if(s){M.splice(0,M.length,...s.main);P.splice(0,P.length,...s.proj);DOC.splice(0,DOC.length,...s.docs);if(s.extra)Object.assign(EXTRA,s.extra);if(s.lists){D.bu=s.lists.bu||D.bu;D.dvs=s.lists.dvs||D.dvs;D.dps=s.lists.dps||D.dps;D.fw=s.lists.fw||D.fw;D.pri=s.lists.pri||D.pri}}}catch(e){}
+['bu','dvs','dps','pri'].forEach(k=>D[k]=[...new Set(D[k])]);
 fix();derive();
-const ICON={ringkasan:'<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',tracker:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',litigasi:'<path d="M14 13l-8.5 8.5a2.1 2.1 0 01-3-3L11 10M16 16l6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>',nonlitigasi:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',blocked:'<path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>',proyek:'<path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>',dokumen:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',kualitas:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/>'};
-const TABS=[['g','Ringkasan'],['ringkasan','Dashboard utama'],['tracker','Tracker utama'],['g','Penanganan'],['litigasi','Litigasi'],['nonlitigasi','Non litigasi'],['blocked','Antrean terblokir'],['g','Proyek dan dokumen'],['proyek','Proyek'],['dokumen','Daftar dokumen'],['g','Kualitas data'],['edit','Edit data'],['kualitas','Catatan data']];
-const TT={ringkasan:'Dashboard utama',tracker:'Tracker utama',litigasi:'Litigasi',nonlitigasi:'Non litigasi',blocked:'Antrean terblokir',proyek:'Proyek',dokumen:'Daftar dokumen',edit:'Edit data',kualitas:'Catatan data'};
-const SUBT={ringkasan:'Kondisi permintaan legal dan compliance',tracker:'Semua permintaan di Main Tracker',litigasi:'Kategori Litigation & Dispute Resolution',nonlitigasi:'Permintaan di luar litigasi',blocked:'Permintaan berstatus Blocked',proyek:'Task proyek dan sub-task',dokumen:'Masa berlaku dokumen',edit:'Isi, ubah, tambah, dan hapus data',kualitas:'Kelengkapan kolom dan temuan data'};
+const ICON={ringkasan:'<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',tracker:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',litigasi:'<path d="M14 13l-8.5 8.5a2.1 2.1 0 01-3-3L11 10M16 16l6-6M8 8l6-6M9 7l8 8M21 11l-8-8"/>',nonlitigasi:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',blocked:'<path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/>',proyek:'<path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>',dokumen:'<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M8 13h8M8 17h8"/>',edit:'<path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/>',master:'<path d="M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M10 16v4"/>',kualitas:'<path d="M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3"/>'};
+const TABS=[['g','Ringkasan'],['ringkasan','Dashboard utama'],['tracker','Tracker utama'],['g','Penanganan'],['litigasi','Litigasi'],['nonlitigasi','Non litigasi'],['blocked','Antrean terblokir'],['g','Proyek dan dokumen'],['proyek','Proyek'],['dokumen','Daftar dokumen'],['g','Kualitas data'],['edit','Edit data'],['master','Kelola daftar'],['kualitas','Catatan data']];
+const TT={ringkasan:'Dashboard utama',tracker:'Tracker utama',litigasi:'Litigasi',nonlitigasi:'Non litigasi',blocked:'Antrean terblokir',proyek:'Proyek',dokumen:'Daftar dokumen',edit:'Edit data',master:'Kelola daftar',kualitas:'Catatan data'};
+const SUBT={ringkasan:'Kondisi permintaan legal dan compliance',tracker:'Semua permintaan di Main Tracker',litigasi:'Kategori Litigation & Dispute Resolution',nonlitigasi:'Permintaan di luar litigasi',blocked:'Permintaan berstatus Blocked',proyek:'Task proyek dan sub-task',dokumen:'Masa berlaku dokumen',edit:'Isi, ubah, tambah, dan hapus data',master:'Tambah, ubah nama, dan hapus pilihan prioritas, divisi, departemen',kualitas:'Kelengkapan kolom dan temuan data'};
 $('nav').innerHTML=TABS.map(x=>x[0]==='g'?`<div class="ngrp">${x[1]}</div>`:`<button class="nav" data-t="${x[0]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[x[0]]}</svg>${x[1]}${x[0]==='blocked'?`<span class="nb" id="nb">${BK}</span>`:''}</button>`).join('');
 const openSb=()=>{$('side').classList.add('on');$('scrim').classList.add('on')},closeSb=()=>{$('side').classList.remove('on');$('scrim').classList.remove('on')};
 $('menu').onclick=openSb;$('scrim').onclick=closeSb;
 $('asof').textContent='Data per '+fd(D.today);
 $('nav').onclick=e=>{const b=e.target.closest('[data-t]');if(b)go(b.dataset.t)};
-$('v').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go,b.dataset.pre)};
-function go(t,pre){cur=t;
-  closeSb();document.querySelectorAll('.nav').forEach(b=>b.dataset.t===t?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));$('ttl').textContent=TT[t];$('stl').textContent=SUBT[t];
-  ({ringkasan:vSum,edit:vEdit,tracker:vEdit,litigasi:vEdit,nonlitigasi:vEdit,blocked:vEdit,proyek:vEdit,dokumen:vEdit,kualitas:vQ})[t](t);$('v').scrollTop=0;
+$('v').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)};
+function go(t){cur=t;MR=null;
+closeSb();document.querySelectorAll('.nav').forEach(b=>b.dataset.t===t?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));$('ttl').textContent=TT[t];$('stl').textContent=SUBT[t];
+({ringkasan:vSum,edit:vEdit,master:vMaster,tracker:vEdit,litigasi:vEdit,nonlitigasi:vEdit,blocked:vEdit,proyek:vEdit,dokumen:vEdit,kualitas:vQ})[t](t);$('v').scrollTop=0;
 }
-
-const PAL=['#2563EB','#059669','#D97706','#E11D48','#7C3AED','#0891B2','#CA8A04','#DB2777','#4D7C0F','#475569'];
+const PAL=['#3B82F6','#10B981','#F59E0B','#F43F5E','#8B5CF6','#06B6D4','#EAB308','#EC4899','#84CC16','#14B8A6','#F97316','#6366F1','#A855F7','#22C55E'];
+const CM={P0:'#F43F5E',P1:'#F59E0B',P2:'#3B82F6',P3:'#14B8A6'};
+const cc=l=>l==='(kosong)'||l==='Lainnya'?'#64748B':(CM[l]||(CM[l]=PAL[Object.keys(CM).length%PAL.length]));
 const SC={Completed:'#059669','In progress':'#D97706',Blocked:'#E11D48','Not started':'#94A3B8'};
 const stE=c=>SO.filter(k=>c[k]).map(k=>[ST[k][0],c[k],SC[k]]);
 const dE=c=>Object.keys(DS).filter(k=>c[k]).map(k=>[DS[k][0],c[k],{expired:'#E11D48',soon:'#D97706',active:'#059669',noend:'#94A3B8'}[k]]);
 const pe=(a,f)=>{let o=Object.entries(cnt(a,f)).sort((x,y)=>y[1]-x[1]).map(([k,v])=>[k||'(kosong)',v]);
- if(o.length>9){const r=o.slice(8).reduce((s,x)=>s+x[1],0);o=[...o.slice(0,8),['Lainnya',r]]}return o};
+if(o.length>9){const t=o.slice(8);o=[...o.slice(0,8),['Lainnya',t.reduce((s,x)=>s+x[1],0),null,t.map(x=>x[0]+' ('+x[1]+')').join(', ')]]}return o};
 function pie(e,sz=150){e=e.filter(x=>x[1]>0);const tot=e.reduce((a,x)=>a+x[1],0);if(!tot)return '<div class="mu" style="padding:14px 0">Belum ada data</div>';
- let a=-Math.PI/2,s='';const r=54,col=(x,i)=>x[2]||PAL[i%PAL.length];
- if(e.length===1)s=`<circle cx="60" cy="60" r="${r}" fill="${col(e[0],0)}"><title>${esc(e[0][0])}: ${e[0][1]}</title></circle>`;
- else e.forEach((x,i)=>{const b=a+x[1]/tot*2*Math.PI;s+=`<path d="M60 60L${60+r*Math.cos(a)} ${60+r*Math.sin(a)}A${r} ${r} 0 ${b-a>Math.PI?1:0} 1 ${60+r*Math.cos(b)} ${60+r*Math.sin(b)}Z" fill="${col(x,i)}" stroke="var(--sf)" stroke-width="1.5"><title>${esc(x[0])}: ${x[1]} (${Math.round(x[1]/tot*100)}%)</title></path>`;a=b});
- return `<div class="pie"><svg viewBox="0 0 120 120" width="${sz}" height="${sz}" role="img" aria-label="Diagram pie, total ${tot}">${s}</svg><ul>${e.map((x,i)=>`<li><i style="background:${col(x,i)}"></i>${esc(x[0])}<b>${x[1]}</b><span>${Math.round(x[1]/tot*100)}%</span></li>`).join('')}</ul></div>`}
+const col=x=>x[2]||cc(x[0]),raw=e.map(x=>x[1]/tot*100),pc=raw.map(Math.floor);
+raw.map((v,i)=>[v-pc[i],i]).sort((a,b)=>b[0]-a[0]).slice(0,100-pc.reduce((a,b)=>a+b,0)).forEach(([,i])=>pc[i]++);
+const R=54,r=34,pt=(a,q)=>(60+q*Math.cos(a))+' '+(60+q*Math.sin(a));let a=-Math.PI/2,s='';
+if(e.length===1)s=`<circle cx="60" cy="60" r="44" fill="none" stroke="${col(e[0])}" stroke-width="20"><title>${esc(e[0][0])}: ${e[0][1]} (100%)</title></circle>`;
+else e.forEach(x=>{const b=a+x[1]/tot*2*Math.PI,lg=b-a>Math.PI?1:0;s+=`<path d="M${pt(a,R)}A${R} ${R} 0 ${lg} 1 ${pt(b,R)}L${pt(b,r)}A${r} ${r} 0 ${lg} 0 ${pt(a,r)}Z" fill="${col(x)}" stroke="var(--sf)" stroke-width="1.5"><title>${esc(x[0])}: ${x[1]} (${f1(x[1]/tot*100)}%)</title></path>`;a=b});
+return `<div class="pie"><svg viewBox="0 0 120 120" width="${sz}" height="${sz}" role="img" aria-label="Diagram donat, total ${tot}">${s}<text x="60" y="61" text-anchor="middle" font-size="20" font-weight="800" fill="var(--tx)">${tot}</text><text x="60" y="74" text-anchor="middle" font-size="8" fill="var(--mu)">total</text></svg><ul>${e.map((x,i)=>`<li${x[3]?` title="${esc(x[3])}"`:''}><i style="background:${col(x)}"></i>${esc(x[0])}<b>${x[1]}</b><span>${raw[i]<1?'<1':pc[i]}%</span></li>`).join('')}</ul></div>`}
+function bars(rows){if(!rows.length)return '<div class="mu" style="padding:14px 0">Belum ada data</div>';const mx=Math.max(1,...rows.map(r=>r[1]));
+return `<ul class="bl">${rows.map(([l,t,c])=>`<li><div class="h"><span style="color:var(--tx)">${esc(l)}</span><span>${t}</span></div><div class="seg" style="height:8px;width:${t/mx*100}%">${SO.filter(k=>c[k]).map(k=>`<i style="flex:${c[k]};background:${SC[k]}" title="${ST[k][0]}: ${c[k]}"></i>`).join('')}</div></li>`).join('')}</ul><p class="sub" style="margin:8px 0 0">${SO.map(k=>`<span style="color:${SC[k]}">●</span> ${ST[k][0]}`).join(' &nbsp; ')}</p>`}
+const DF={bu:''},DFL={bu:'Business unit'};
+const fa=a=>a.filter(x=>Object.keys(DF).every(k=>!DF[k]||(a===DOC&&(k==='bu'||k==='p'))||(DF[k]==='__'?!x[k]:x[k]===DF[k])));
 function vSum(){
-  const b31=bl.filter(x=>x.dv==='31011').length,pw=P.filter(x=>x.pi);
-  const att=[['bad',b31,'Tugas terblokir berkode divisi 31011','Pemilik belum jelas.','blocked','','Lihat'],
-   ['bad',Math.max(0,...ages),'Hari: tugas terblokir tertua',`Rata-rata umur terblokir ${f1(avg(ages))} hari.`,'blocked','','Lihat'],
-   ['wip',od.length,'Tugas berjalan lewat tanggal akhir',od.map(x=>esc(x.title||x.cat)).join('; '),'tracker','','Buka'],
-   ['wip',pw.length,'Sub-task proyek dengan kendala',pw.map(x=>esc(x.sub)).join('; '),'proyek','','Lihat'],
-   ['idle',dC.noend||0,'Dokumen tanpa tanggal berakhir',`Dari ${DOC.length} dokumen.`,'dokumen','','Lihat']].filter(a=>a[1]);
-  const pn=(h,s,b)=>`<section class="pn"><h2>${h}</h2><p class="sub">${s}</p>${b}</section>`;
-  $('v').innerHTML=`${N+P.length+DOC.length?'':`<section class="pn"><h2>Belum ada data</h2><p class="sub" style="margin:0">Mulai isi lewat <button class="link" data-go="edit">Edit data</button>: tambah baris satu per satu atau impor file Excel.</p></section>`}<section class="hero"><div class="big">${N?Math.round(OK/N*100):0}%</div><b>${OK} dari ${N} permintaan selesai</b>
-   <p style="color:#B7C3D6;font-size:13.5px;margin-top:6px">${WIP} berjalan, ${BK} terblokir. Rata-rata SLA permintaan selesai ${f1(SLA)} hari. Semua angka mengikuti perubahan di tab Edit data.</p></section>
-  <div class="k"><div><b>${N}</b><span>Permintaan</span></div><div><b>${new Set(P.map(x=>x.project)).size}</b><span>Proyek (${P.length} sub-task)</span></div><div><b>${DOC.length}</b><span>Dokumen</span></div><div><b>${BK}</b><span>Terblokir</span></div><div><b>${od.length}</b><span>Lewat tanggal akhir</span></div></div>
-  ${att.length?`<section class="pn"><h2>Perlu perhatian</h2><ul class="att" style="margin-top:8px">${att.map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${a[4]}" data-pre="${a[5]}">${a[6]}</button></li>`).join('')}</ul></section>`:''}
-  <div class="g">${pn('Status permintaan','Semua permintaan di Main Tracker.',pie(stE(C)))}${pn('Prioritas','Jumlah permintaan per prioritas.',pie(pe(M,x=>x.p)))}
-  ${pn('Beban per divisi','Kode 31011 adalah nilai di kolom Division, belum jelas divisi apa.',pie(pe(M,x=>dvn(x.dv))))}${pn('Kategori','Menurut Legal Framework.',pie(pe(M,x=>x.cat)))}
-  ${pn('Business unit',`${M.filter(x=>!x.bu).length} baris belum punya business unit.`,pie(pe(M.filter(x=>x.bu),x=>x.bu)))}${pn('Permintaan per bulan','Menurut tanggal mulai.',pie(pe(M.filter(x=>x.sd),x=>MON[+x.sd.slice(5,7)-1]+' '+x.sd.slice(0,4))))}
-  ${pn('Status sub-task proyek',`${new Set(P.map(x=>x.project)).size} proyek.`,pie(stE(pC)))}${pn('Status dokumen',`${DOC.length} dokumen.`,pie(dE(dC)))}</div>`;
+const m=fa(M),p=fa(P),d=fa(DOC),n=m.length,c=cnt(m,x=>x.st),ok=c.Completed||0,wip=c['In progress']||0,bk=c.Blocked||0,
+sla=avg(m.filter(x=>x.st==='Completed'&&x.dur!=null).map(x=>x.dur)),b=m.filter(x=>x.st==='Blocked'),ag=b.map(x=>x.age).filter(x=>x!=null),
+o=m.filter(x=>x.st==='In progress'&&x.ed&&x.ed<D.today),pcn=cnt(p,x=>x.st),dcn=cnt(d,x=>x.st),np=new Set(p.map(x=>x.project)).size,pw=p.filter(x=>x.pi);
+const att=[['bad',ag.length?Math.max(...ag):0,'Hari: tugas terblokir tertua',`Rata-rata umur terblokir ${f1(avg(ag))} hari.`,'blocked','Lihat'],
+['wip',o.length,'Tugas berjalan lewat tanggal akhir',o.map(x=>esc(x.title||x.cat)).join('; '),'tracker','Buka'],
+['wip',pw.length,'Sub-task proyek dengan kendala',pw.map(x=>esc(x.sub)).join('; '),'proyek','Lihat'],
+['idle',dcn.noend||0,'Dokumen tanpa tanggal berakhir',`Dari ${d.length} dokumen.`,'dokumen','Lihat']].filter(a=>a[1]);
+const card=(h,e,base,unit,note)=>{const tot=e.reduce((s,x)=>s+x[1],0);return `<section class="pn"><h2>${h}</h2><p class="sub">${tot} dari ${base} ${unit}${note?' · '+note:''}</p>${pie(e)}</section>`};
+const opt=k=>{const a=k==='bu'||k==='p'?[...M,...P]:[...M,...P,...DOC],v=[...new Set(a.map(x=>x[k]).filter(Boolean))].sort(),e=a.some(x=>!x[k]);return `<option value="">${DFL[k]}: semua</option>${v.map(x=>`<option value="${esc(x)}"${DF[k]===x?' selected':''}>${esc(x)}</option>`).join('')}${e?`<option value="__"${DF[k]==='__'?' selected':''}>(kosong)</option>`:''}`};
+const mo={};m.forEach(x=>{const k=x.sd?x.sd.slice(0,7):'_';(mo[k]=mo[k]||[]).push(x)});
+const rows=Object.keys(mo).sort().map(k=>[k==='_'?'Tanpa tanggal mulai':MON[+k.slice(5)-1]+' '+k.slice(0,4),mo[k].length,cnt(mo[k],x=>x.st)]);
+const act=Object.keys(DF).some(k=>DF[k]);
+$('v').innerHTML=`${M.length+P.length+DOC.length?'':`<section class="pn"><h2>Belum ada data</h2><p class="sub" style="margin:0">Mulai isi lewat <button class="link" data-go="edit">Edit data</button>: tambah baris satu per satu atau impor file Excel.</p></section>`}
+<section class="pn" style="padding:12px 16px"><div class="tools"><b>Filter</b>${['bu'].map(k=>`<select class="fi" data-df="${k}" aria-label="${DFL[k]}">${opt(k)}</select>`).join('')}${act?'<button class="btn on" data-dfr="1">Reset filter</button>':''}<span class="mu" style="font-size:12px">Menampilkan ${n} dari ${M.length} permintaan, ${p.length} dari ${P.length} sub-task, ${d.length} dari ${DOC.length} dokumen. Filter business unit tidak berlaku untuk dokumen.</span></div></section>
+<section class="hero"><div class="big">${n?Math.round(ok/n*100):0}%</div><b>${ok} dari ${n} permintaan selesai</b>
+<p style="color:#B7C3D6;font-size:13.5px;margin-top:6px">${wip} berjalan, ${bk} terblokir, ${c['Not started']||0} belum mulai. Rata-rata SLA permintaan selesai ${f1(sla)} hari. Angka mengikuti filter dan perubahan di tab Edit data.</p></section>
+<div class="k"><div><b>${n}</b><span>Permintaan</span></div><div><b>${np}</b><span>Proyek (${p.length} sub-task)</span></div><div><b>${d.length}</b><span>Dokumen</span></div><div><b>${bk}</b><span>Terblokir</span></div><div><b>${o.length}</b><span>Lewat tanggal akhir</span></div></div>
+${att.length?`<section class="pn"><h2>Perlu perhatian</h2><ul class="att" style="margin-top:8px">${att.map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${a[4]}">${a[5]}</button></li>`).join('')}</ul></section>`:''}
+<div class="g">${card('Status permintaan',stE(c),n,'permintaan')}${card('Kategori',pe(m,x=>x.cat),n,'permintaan','menurut Legal Framework')}
+${card('Business unit',pe(m,x=>x.bu),n,'permintaan')}${card('Status sub-task proyek',stE(pcn),p.length,'sub-task',np+' proyek')}
+${card('Status dokumen',dE(dcn),d.length,'dokumen')}</div>
+<section class="pn"><h2>Permintaan per bulan</h2><p class="sub">Menurut tanggal mulai, berurutan, dengan komposisi status. Total ${rows.reduce((s,r)=>s+r[1],0)} dari ${n} permintaan.</p>${bars(rows)}</section>`;
 }
-/* completeness */
+$('v').addEventListener('change',e=>{const t=e.target;if(cur!=='ringkasan'||!t.dataset.df)return;DF[t.dataset.df]=t.value;const y=$('v').scrollTop;vSum();$('v').scrollTop=y});
+$('v').addEventListener('click',e=>{if(cur!=='ringkasan'||!e.target.closest('[data-dfr]'))return;Object.keys(DF).forEach(k=>DF[k]='');vSum()});
 function vQ(){
-  const fill=(a,f)=>a.filter(f).length,pc=(a,f)=>Math.round(fill(a,f)/a.length*100);
-  const fld=[['Main Tracker',M,[['Request Lists',x=>x.title],['Business Unit',x=>x.bu],['Priority',x=>x.p],['Division',x=>x.dv],['Department',x=>x.dp],['Category',x=>x.cat],['Start date',x=>x.sd],['End date',x=>x.ed],['Deliverable',x=>x.dl],['Notes',x=>x.note]]],
-   ['Project (sub-task)',P,[['Business Unit',x=>x.bu],['Priority',x=>x.p],['Division',x=>x.dv],['Department',x=>x.dp],['Start date',x=>x.sd],['End date',x=>x.ed],['Deliverable',x=>x.dl],['Notes',x=>x.note],['PI',x=>x.pi],['CA',x=>x.ca]]],
-   ['Document Lists',DOC,[['Division',x=>x.dv],['Department',x=>x.dp],['Instansi',x=>x.inst],['Start date',x=>x.sd],['End date',x=>x.ed],['File',x=>x.file]]]];
-  $('v').innerHTML=`<section class="pn"><h2>Kelengkapan kolom</h2><p class="sub">Persentase baris yang sudah terisi per kolom. Kolom kosong perlu dilengkapi di Excel.</p><div class="g">${fld.map(([t,a,cs])=>{let ok=0,all=0;const rows=cs.map(([n,f])=>{const k=fill(a,f);ok+=k;all+=a.length;return `<li><div class="h"><span>${n}</span><span>${k}/${a.length} · ${a.length?pc(a,f):0}%</span></div></li>`}).join('');return `<div><b>${t}</b> <span class="mu">(${a.length} baris)</span>${pie([['Terisi',ok,'#059669'],['Kosong',all-ok,'#E11D48']],120)}<ul class="bl">${rows}</ul></div>`}).join('')}</div></section>
-  <section class="pn"><h2>Temuan</h2><ul class="att" style="margin-top:8px">${[
-   ['bad',M.filter(x=>x.dv==='31011').length,'Kode divisi 31011','Nilai ini ada di Main Tracker dan daftar Divisi. Pastikan divisi yang benar.'],
-   ['bad',M.filter(x=>!x.title).length,'Permintaan tanpa judul','Isi kolom Request Lists dan Business Unit. Filter "Tanpa judul" di Tracker menunjukkan nomor barisnya.'],
-   ['wip',M.filter(x=>!x.dp).length,'Departemen kosong','Lengkapi kolom Department.'],
-   ['wip',M.filter(x=>x.st==='Completed'&&!x.ed).length,'Selesai tanpa tanggal selesai','SLA belum bisa dihitung.'],
-   ['wip',M.filter(x=>!x.dl).length,'Deliverable kosong','Isi kolom Deliverable di tab Edit data.'],
-   ['idle',DOC.filter(x=>x.bad).length,'Dokumen dengan tanggal terbalik','End date lebih awal dari Start date.']].filter(a=>a[1]).map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${/okumen/.test(a[2])?'dokumen':'tracker'}">Perbaiki</button></li>`).join('')}</ul></section>`;
+const fill=(a,f)=>a.filter(f).length,pc=(a,f)=>Math.round(fill(a,f)/a.length*100);
+const fld=[['Main Tracker',M,[['Request Lists',x=>x.title],['Business Unit',x=>x.bu],['Category',x=>x.cat],['Start date',x=>x.sd],['End date',x=>x.ed],['Deliverable',x=>x.dl],['Notes',x=>x.note]]],
+['Project (sub-task)',P,[['Business Unit',x=>x.bu],['Start date',x=>x.sd],['End date',x=>x.ed],['Deliverable',x=>x.dl],['Notes',x=>x.note],['PI',x=>x.pi],['CA',x=>x.ca]]],
+['Document Lists',DOC,[['Instansi',x=>x.inst],['Start date',x=>x.sd],['End date',x=>x.ed],['File',x=>x.file]]]];
+$('v').innerHTML=`<section class="pn"><h2>Kelengkapan kolom</h2><p class="sub">Persentase baris yang sudah terisi per kolom. Lengkapi lewat tab Edit data.</p><div class="g">${fld.map(([t,a,cs])=>{let ok=0,all=0;const rows=cs.map(([n,f])=>{const k=fill(a,f);ok+=k;all+=a.length;return `<li><div class="h"><span>${n}</span><span>${k}/${a.length} · ${a.length?pc(a,f):0}%</span></div></li>`}).join('');return `<div><b>${t}</b> <span class="mu">(${a.length} baris)</span>${pie([['Terisi',ok,'#059669'],['Kosong',all-ok,'#E11D48']],120)}<ul class="bl">${rows}</ul></div>`}).join('')}</div></section>
+<section class="pn"><h2>Temuan</h2><ul class="att" style="margin-top:8px">${[
+['bad',M.filter(x=>!x.title).length,'Permintaan tanpa judul','Isi kolom Request Lists di tab Edit data.'],
+['wip',M.filter(x=>x.st==='Completed'&&!x.ed).length,'Selesai tanpa tanggal selesai','SLA belum bisa dihitung.'],
+['wip',M.filter(x=>!x.dl).length,'Deliverable kosong','Isi kolom Deliverable di tab Edit data.'],
+['idle',DOC.filter(x=>x.bad).length,'Dokumen dengan tanggal terbalik','End date lebih awal dari Start date.']].filter(a=>a[1]).map(a=>`<li><div class="n ${a[0]}">${a[1]}</div><div style="flex:1"><b>${a[2]}</b><span>${a[3]}</span></div><button class="link" data-go="${/okumen/.test(a[2])?'dokumen':'tracker'}">Perbaiki</button></li>`).join('')}</ul></section>`;
 }
-
+/* kelola daftar: tambah, ubah nama, hapus. Semua langsung diterapkan ke data */
+const MF={pri:'p',dvs:'dv',dps:'dp',bu:'bu',cat:'cat'};
+const ML=[['pri','Prioritas'],['dvs','Divisi'],['dps','Departemen'],['bu','Business unit'],['cat','Kategori']];
+const mget=k=>k==='cat'?D.fw.map(f=>f.n):D[k];
+const mdel=(k,i)=>{k==='cat'?D.fw.splice(i,1):D[k].splice(i,1)};
+const mset=(k,i,v)=>{k==='cat'?D.fw[i].n=v:D[k][i]=v};
+const madd=(k,v)=>{k==='cat'?D.fw.push({n:v,d:[]}):D[k].push(v)};
+const muse=(k,v)=>[M,P,DOC].reduce((s,a)=>s+a.filter(x=>x[MF[k]]===v).length,0);
+const mrows=(k,o,n)=>[M,P,DOC].forEach(a=>a.forEach(x=>{if(x[MF[k]]===o)x[MF[k]]=n}));
+let MR=null;
+function vMaster(){
+$('v').innerHTML=`<section class="pn"><h2>Kelola daftar pilihan <span id="msg" class="mu" role="status" style="font-size:12px;font-weight:600"></span></h2><p class="sub">Hapus atau ubah nama sebuah pilihan, lalu semua baris yang memakainya ikut berubah seketika (dihapus berarti kolomnya dikosongkan). Dashboard, diagram, dan tabel langsung mengikuti.</p><div class="g">${ML.map(([k,t])=>`<div><b>${t}</b> <span class="mu">(${mget(k).length})</span><ul class="bl">${mget(k).map((v,i)=>{const id=k+'|'+i;return `<li><div class="h">${MR===id?`<input class="fi" id="mre" value="${esc(v)}" aria-label="Nama baru"><span><button class="btn on" data-ms="${id}">Simpan</button> <button class="btn" data-mc="1">Batal</button></span>`:`<span style="color:var(--tx)">${esc(v)} <small class="mu">(${muse(k,v)} dipakai)</small></span><span><button class="btn" data-mr="${id}">Ubah</button> <button class="btn" data-md="${id}">Hapus</button></span>`}</div></li>`}).join('')}</ul><div class="tools" style="margin-top:8px"><input class="fi" id="ma-${k}" placeholder="Tambah ${t.toLowerCase()}" aria-label="Tambah ${t}"><button class="btn" data-ma="${k}">+ Tambah</button></div></div>`).join('')}</div></section>`;
+if(MR){const e=$('mre');e.focus();e.select()}}
+$('v').addEventListener('click',e=>{const t=e.target.closest('button');if(!t||cur!=='master')return;const d=t.dataset;
+if(d.md){const [k,i]=d.md.split('|'),v=mget(k)[+i],n=muse(k,v);
+if(!d.arm&&n){d.arm=1;t.textContent='Yakin? '+n+' baris dikosongkan';return}
+mrows(k,v,'');mdel(k,+i);touch();vMaster();msg('"'+v+'" dihapus, '+n+' baris dikosongkan')}
+else if(d.mr){MR=d.mr;vMaster()}
+else if(d.mc){MR=null;vMaster()}
+else if(d.ms){const [k,i]=d.ms.split('|'),L=mget(k),o=L[+i],nv=S($('mre').value).replace(/\s+/g,' ');if(!nv)return;
+const j=L.findIndex((x,ix)=>ix!==+i&&x.toLowerCase()===nv.toLowerCase());
+if(j>=0){mrows(k,o,L[j]);mdel(k,+i)}else{mrows(k,o,nv);mset(k,+i,nv)}
+MR=null;touch();vMaster();msg(j>=0?'Digabung ke "'+L[j]+'"':'Nama diubah')}
+else if(d.ma){const k=d.ma,v=S($('ma-'+k).value).replace(/\s+/g,' ');if(!v)return;
+if(mget(k).some(x=>x.toLowerCase()===v.toLowerCase())){msg('Sudah ada');return}
+madd(k,v);touch();vMaster();msg('"'+v+'" ditambahkan')}});
 /* editor */
-const common=[['bu','Business unit','s',()=>D.bu],['p','Prio','s',()=>['P0','P1','P2','P3']],['dv','Divisi','s',()=>D.dvs],['dp','Departemen','s',()=>D.dps],['cat','Kategori','s',()=>D.fw.map(f=>f.n)],['st','Status','s',()=>SO],['sd','Mulai','d'],['ed','Selesai','d'],['dl','Deliverable','t'],['note','Catatan','t']];
+const common=[['bu','Business unit','s',()=>D.bu],['p','Prio','s',()=>D.pri],['dv','Divisi','s',()=>D.dvs],['dp','Departemen','s',()=>D.dps],['cat','Kategori','s',()=>D.fw.map(f=>f.n)],['st','Status','s',()=>SO],['sd','Mulai','d'],['ed','Selesai','d'],['dl','Deliverable','t'],['note','Catatan','t']];
 const COLS={main:[['title','Permintaan','t'],...common],proj:[['project','Proyek','t'],['sub','Sub-task','t'],...common,['pi','PI','t'],['ca','CA','t']],
- docs:[['name','Dokumen','t'],common[2],common[3],common[4],['inst','Pihak kedua','t'],['sd','Mulai','d'],['ed','Berakhir','d'],['file','File','t']]};
-const EXTRA={main:[],proj:[],docs:[]};
+docs:[['name','Dokumen','t'],common[2],common[3],common[4],['inst','Pihak kedua','t'],['sd','Mulai','d'],['ed','Berakhir','d'],['file','File','t']]};
 const CL=()=>COLS[EDS].concat(EXTRA[EDS].map(n=>['x_'+n,n,'t']));
-try{const s=JSON.parse(localStorage.getItem('lcc-v2')||'null');if(s&&s.extra)Object.assign(EXTRA,s.extra);if(s&&s.lists){D.bu=s.lists.bu||D.bu;D.dvs=s.lists.dvs||D.dvs;D.dps=s.lists.dps||D.dps;D.fw=s.lists.fw||D.fw}}catch(e){}
 const BLANK={main:()=>({title:'',bu:'',p:'P1',dv:'',dp:'',cat:'Contract Management',st:'Not started',sd:null,ed:null,dl:'',note:''}),
- proj:()=>({project:'',sub:'',bu:'',p:'P1',dv:'',dp:'',cat:'Compliance & Regulatory / Affairs',st:'Not started',sd:null,ed:null,dl:'',note:'',pi:'',ca:''}),
- docs:()=>({name:'',dv:'',dp:'',cat:'Contract Management',inst:'',sd:null,ed:null,file:''})};
+proj:()=>({project:'',sub:'',bu:'',p:'P1',dv:'',dp:'',cat:'Compliance & Regulatory / Affairs',st:'Not started',sd:null,ed:null,dl:'',note:'',pi:'',ca:''}),
+docs:()=>({name:'',dv:'',dp:'',cat:'Contract Management',inst:'',sd:null,ed:null,file:''})};
 let EDS='main';const DSET=()=>({main:M,proj:P,docs:DOC})[EDS];
-const msg=s=>{const m=$('msg');if(m)m.textContent=s};
-function touch(){fix();derive();live();try{localStorage.setItem('lcc-v2',JSON.stringify({main:M,proj:P,docs:DOC,extra:EXTRA,lists:{bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw}}));msg('Tersimpan di browser ini')}catch(e){msg('Tidak bisa menyimpan di browser ini, unduh Excel')}}
+const msg=s=>{const m=$('msg');if(m)m.textContent=s;$('gst').textContent=s};
+const snap=()=>JSON.stringify({main:M,proj:P,docs:DOC,extra:EXTRA,lists:{bu:D.bu,dvs:D.dvs,dps:D.dps,fw:D.fw,pri:D.pri}});
+let LAST=null;const HIST=[],RED=[];
+function load(j){const s=JSON.parse(j);M.splice(0,M.length,...(s.main||[]));P.splice(0,P.length,...(s.proj||[]));DOC.splice(0,DOC.length,...(s.docs||[]));Object.assign(EXTRA,{main:[],proj:[],docs:[]},s.extra||{});if(s.lists)['bu','dvs','dps','pri','fw'].forEach(k=>{if(s.lists[k])D[k]=s.lists[k]})}
+const hbtn=()=>{$('un').disabled=!HIST.length;$('rd').disabled=!RED.length};
+function stor(c){try{localStorage.setItem('lcc-v2',c);const d=new Date();msg('Tersimpan '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'))}catch(e){msg('Gagal menyimpan di browser. Unduh cadangan JSON')}}
+function touch(){fix();derive();live();const c=snap();if(c!==LAST){HIST.push(LAST);if(HIST.length>60)HIST.shift();RED.length=0;LAST=c}stor(c);hbtn()}
+function undo(r){const from=r?RED:HIST,to=r?HIST:RED;if(!from.length)return msg(r?'Tidak ada yang diulang':'Tidak ada yang diurungkan');
+to.push(LAST);LAST=from.pop();load(LAST);fix();derive();stor(LAST);hbtn();go(cur);msg(r?'Diulang':'Diurungkan')}
+$('un').onclick=()=>undo(0);$('rd').onclick=()=>undo(1);
+document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;const k=e.key.toLowerCase();if(k==='z'){e.preventDefault();undo(e.shiftKey)}else if(k==='y'){e.preventDefault();undo(1)}});
+async function saveFile(fn,data,mime){return saveFile(fn,data)}
+const backup=()=>saveFile('Legal_Command_Center_cadangan_'+D.today+'.json',new TextEncoder().encode(snap()),'application/json');
+async function restore(f){if(!f)return;try{const t=await f.text(),s=JSON.parse(t);if(!s||!Array.isArray(s.main)||!Array.isArray(s.proj)||!Array.isArray(s.docs))throw 0;load(t);touch();vEdit();msg('Cadangan dipulihkan (bisa diurungkan)')}catch(x){msg('File cadangan tidak valid')}}
 function cell(c,v,i){const k=c[0],a=`data-i="${i}" data-k="${k}" aria-label="${c[1]}"`;v=v==null?'':v;
- if(c[2]==='d')return `<input type="date" ${a} value="${esc(v)}">`;
- if(c[2]==='s'){let L=c[3]();if(v!==''&&!L.includes(v))L=[...L,v];return `<select ${a}><option value=""></option>${L.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${esc(k==='st'&&ST[x]?ST[x][0]:x)}</option>`).join('')}</select>`}
- return `<input type="text" ${a} value="${esc(v)}" style="min-width:${['title','name','sub','note','pi','ca'].includes(k)?230:130}px">`}
+if(c[2]==='d')return `<input type="date" ${a} value="${esc(v)}">`;
+if(c[2]==='s'){let L=c[3]();if(v!==''&&!L.includes(v))L=[...L,v];return `<select ${a}><option value=""></option>${L.map(x=>`<option value="${esc(x)}"${x===v?' selected':''}>${esc(k==='st'&&ST[x]?ST[x][0]:x)}</option>`).join('')}</select>`}
+return `<input type="text" ${a} value="${esc(v)}" style="min-width:${['title','name','sub','note','pi','ca'].includes(k)?230:130}px">`}
 const SEL=new Set();
 let ETAB='edit',EF=null;
 const PREDEF={litigasi:{cat:LIT},blocked:{st:'Blocked'}};
 const HINT={edit:'Pilih data di tombol kiri, lalu ubah langsung di sel.',tracker:'Semua permintaan. Ubah langsung di sel.',litigasi:'Baris baru otomatis berkategori Litigation & Dispute Resolution.',nonlitigasi:'Hanya permintaan di luar litigasi.',blocked:'Baris baru otomatis berstatus Blocked. Ubah status ke Completed untuk mengeluarkan dari antrean.',proyek:'Satu baris per sub-task. Isi kolom Proyek untuk mengelompokkan.',dokumen:'Status dokumen dihitung otomatis dari tanggal berakhir.'};
 function live(){const el=$('live');if(!el)return;
- const A=EDS==='main'&&EF?M.filter(EF):M,pn=(h,b)=>`<div><b>${h}</b>${b}</div>`;
- el.innerHTML=`<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">`+(EDS==='main'?pn('Status',pie(stE(cnt(A,x=>x.st)),120))+pn('Prioritas',pie(pe(A,x=>x.p),120))+pn('Divisi',pie(pe(A,x=>dvn(x.dv)),120)):EDS==='proj'?pn('Status sub-task',pie(stE(cnt(P,x=>x.st)),120))+pn('Sub-task per proyek',pie(pe(P,x=>x.project),120)):pn('Status dokumen',pie(dE(cnt(DOC,x=>x.st)),120))+pn('Dokumen per divisi',pie(pe(DOC,x=>x.dv),120)))+`</div>`}
+const A=EDS==='main'&&EF?M.filter(EF):M,pn=(h,b)=>`<div><b>${h}</b>${b}</div>`;
+el.innerHTML=`<div class="g" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">`+(EDS==='main'?pn('Status',pie(stE(cnt(A,x=>x.st)),120))+pn('Kategori',pie(pe(A,x=>x.cat),120)):EDS==='proj'?pn('Status sub-task',pie(stE(cnt(P,x=>x.st)),120))+pn('Sub-task per proyek',pie(pe(P,x=>x.project),120)):pn('Status dokumen',pie(dE(cnt(DOC,x=>x.st)),120)))+`</div>`}
 function vis(){const q=($('eq').value||'').toLowerCase(),s=$('fst').value;let n=0;
- document.querySelectorAll('#eb tr').forEach(r=>{const h=(q&&!r.dataset.s.includes(q))||(s!=='ALL'&&r.dataset.st!==s);r.hidden=h;if(!h)n++});$('cnt').textContent=n+' baris'}
+document.querySelectorAll('#eb tr').forEach(r=>{const h=(q&&!r.dataset.s.includes(q))||(s!=='ALL'&&r.dataset.st!==s);r.hidden=h;if(!h)n++});$('cnt').textContent=n+' baris'}
 function vEdit(tab){
-  tab=tab||ETAB;ETAB=tab;if(tab!=='edit')EDS=({proyek:'proj',dokumen:'docs'})[tab]||'main';
-  EF=PRE[tab]&&tab!=='tracker'?PRE[tab]:null;
-  const cols=CL(),a=DSET();SEL.clear();
-  const so=EDS==='docs'?Object.keys(DS).map(k=>[k,DS[k][0]]):SO.map(k=>[k,ST[k][0]]);
-  $('v').innerHTML=`<section class="pn" style="padding:12px 16px"><div class="tools">
-  ${tab==='edit'?[['main','Tracker utama'],['proj','Proyek'],['docs','Dokumen']].map(([k,l])=>`<button class="btn${k===EDS?' on':''}" data-ds="${k}">${l}</button>`).join(''):''}
-  <b id="cnt"></b><input id="eq" class="fi" type="search" placeholder="Cari baris" aria-label="Cari baris">
-  <select id="fst" class="fi" aria-label="Filter status"><option value="ALL">Semua status</option>${so.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select>
-  <button class="btn" id="add">+ Tambah baris</button><button class="btn" id="exp">Unduh Excel</button>
-  <label class="btn">Impor Excel<input id="imp" type="file" accept=".xlsx,.xls,.xlsm,.csv" hidden></label>
-  <button class="btn" id="rst">Kosongkan semua data</button><span id="msg" class="mu" role="status"></span></div>
-  <p class="sub" style="margin:8px 0 0">${HINT[tab]} Perubahan tersimpan otomatis di browser ini dan seketika masuk ke diagram dan semua halaman. Untuk menyimpan permanen, klik Unduh Excel.</p>
-  <div class="tools" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ln)"><b>Edit massal</b><b id="sel" class="mu">0 dipilih</b>
-  <select id="bf" class="fi" aria-label="Kolom yang diubah">${cols.map((c,i)=>`<option value="${i}">${c[1]}</option>`).join('')}</select><span id="bv"></span>
-  <button class="btn" id="bap">Terapkan ke yang dipilih</button><button class="btn" id="bdel">Hapus yang dipilih</button></div></section>
-  <section class="pn"><h2>Diagram langsung</h2><p class="sub">Berubah seketika saat Anda mengedit.</p><div id="live"></div></section>
-  <div class="tw ed"><table><thead><tr><th><input type="checkbox" id="sa" aria-label="Pilih semua yang tampil"> #</th>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr></thead><tbody id="eb">${a.map((r,i)=>EF&&!EF(r)?'':`<tr data-st="${esc(r.st)}" data-s="${esc(cols.map(c=>r[c[0]]).join(' ').toLowerCase())}"><td class="nu"><input type="checkbox" data-sel="${i}" aria-label="Pilih baris ${i+1}"> <span class="mu">${i+1}</span></td>${cols.map(c=>`<td>${cell(c,r[c[0]],i)}</td>`).join('')}<td><button class="btn" data-del="${i}">Hapus</button></td></tr>`).join('')}</tbody></table></div>`;
-  $('eq').oninput=vis;$('fst').onchange=vis;bulkField();live();vis();
+tab=tab||ETAB;ETAB=tab;if(tab!=='edit')EDS=({proyek:'proj',dokumen:'docs'})[tab]||'main';
+EF=PRE[tab]&&tab!=='tracker'?PRE[tab]:null;
+const cols=CL(),a=DSET();SEL.clear();
+const so=EDS==='docs'?Object.keys(DS).map(k=>[k,DS[k][0]]):SO.map(k=>[k,ST[k][0]]);
+$('v').innerHTML=`<section class="pn" style="padding:12px 16px"><div class="tools">
+${tab==='edit'?[['main','Tracker utama'],['proj','Proyek'],['docs','Dokumen']].map(([k,l])=>`<button class="btn${k===EDS?' on':''}" data-ds="${k}">${l}</button>`).join(''):''}
+<b id="cnt"></b><input id="eq" class="fi" type="search" placeholder="Cari baris" aria-label="Cari baris">
+<select id="fst" class="fi" aria-label="Filter status"><option value="ALL">Semua status</option>${so.map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select>
+<button class="btn" id="add">+ Tambah baris</button><button class="btn" id="exp">Unduh Excel</button>
+<label class="btn">Impor Excel<input id="imp" type="file" accept=".xlsx,.xls,.xlsm,.csv" hidden></label>
+<button class="btn" id="bk">Cadangan JSON</button><button class="btn" id="rt">Pulihkan cadangan</button><input id="rf" type="file" accept=".json,application/json" hidden><button class="btn" id="rsl">Reset daftar ke bawaan</button><button class="btn" id="rst">Kosongkan semua data</button><span id="msg" class="mu" role="status"></span></div>
+<p class="sub" style="margin:8px 0 0">${HINT[tab]} Perubahan tersimpan otomatis di browser ini dan seketika masuk ke diagram dan semua halaman. Untuk menyimpan permanen, klik Unduh Excel.</p>
+<div class="tools" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--ln)"><b>Edit massal</b><b id="sel" class="mu">0 dipilih</b>
+<select id="bf" class="fi" aria-label="Kolom yang diubah">${cols.map((c,i)=>`<option value="${i}">${c[1]}</option>`).join('')}</select><span id="bv"></span>
+<button class="btn" id="bap">Terapkan ke yang dipilih</button><button class="btn" id="bdel">Hapus yang dipilih</button></div><p class="sub" style="margin:6px 0 0">Mengosongkan nilai (pilihan kosong) pada edit massal menghapus prioritas, divisi, atau departemen dari baris terpilih. Untuk menghapus sebuah pilihan dari seluruh data, pakai <button class="link" data-go="master">Kelola daftar</button>.</p></section>
+<section class="pn"><h2>Diagram langsung</h2><p class="sub">Berubah seketika saat Anda mengedit.</p><div id="live"></div></section>
+<div class="tw ed"><table><thead><tr><th><input type="checkbox" id="sa" aria-label="Pilih semua yang tampil"> #</th>${cols.map(c=>`<th>${c[1]}</th>`).join('')}<th></th></tr></thead><tbody id="eb">${a.map((r,i)=>EF&&!EF(r)?'':`<tr data-st="${esc(r.st)}" data-s="${esc(cols.map(c=>r[c[0]]).join(' ').toLowerCase())}"><td class="nu"><input type="checkbox" data-sel="${i}" aria-label="Pilih baris ${i+1}"> <span class="mu">${i+1}</span></td>${cols.map(c=>`<td>${cell(c,r[c[0]],i)}</td>`).join('')}<td class="nu"><button class="btn" data-dup="${i}">Salin</button> <button class="btn" data-del="${i}">Hapus</button></td></tr>`).join('')}</tbody></table></div>`;
+$('eq').oninput=vis;$('fst').onchange=vis;bulkField();live();vis();
 }
 function selUpd(){const n=$('sel');if(n)n.textContent=SEL.size+' dipilih'}
 function bulkField(){const c=CL()[+$('bf').value];$('bv').innerHTML=cell(c,'',0).replace(/data-i="0" data-k="\w+"/,'id="bval"')}
 function bulkChange(t){
- if(t.dataset.sel!=null){t.checked?SEL.add(+t.dataset.sel):SEL.delete(+t.dataset.sel);selUpd()}
- else if(t.id==='sa'){document.querySelectorAll('#eb tr:not([hidden]) [data-sel]').forEach(c=>{c.checked=t.checked;t.checked?SEL.add(+c.dataset.sel):SEL.delete(+c.dataset.sel)});selUpd()}
- else if(t.id==='bf')bulkField()}
+if(t.dataset.sel!=null){t.checked?SEL.add(+t.dataset.sel):SEL.delete(+t.dataset.sel);selUpd()}
+else if(t.id==='sa'){document.querySelectorAll('#eb tr:not([hidden]) [data-sel]').forEach(c=>{c.checked=t.checked;t.checked?SEL.add(+c.dataset.sel):SEL.delete(+c.dataset.sel)});selUpd()}
+else if(t.id==='bf')bulkField()}
 function bulkApply(){if(!SEL.size)return msg('Pilih baris dulu');const c=CL()[+$('bf').value],v=$('bval').value,a=DSET(),n=SEL.size;
- SEL.forEach(i=>{a[i][c[0]]=c[2]==='d'?(v||null):v});touch();vEdit();msg(n+' baris diperbarui')}
+SEL.forEach(i=>{a[i][c[0]]=c[2]==='d'?(v||null):v});touch();vEdit();msg(n+' baris diperbarui')}
 function bulkDel(t){if(!SEL.size)return msg('Pilih baris dulu');if(!t.dataset.arm){t.dataset.arm=1;t.textContent='Yakin hapus '+SEL.size+'?';return}
- const a=DSET();[...SEL].sort((x,y)=>y-x).forEach(i=>a.splice(i,1));touch();vEdit()}
-$('v').addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
- if(t.dataset.ds){EDS=t.dataset.ds;vEdit()}
- else if(t.id==='add'){DSET().push(Object.assign(BLANK[EDS](),PREDEF[ETAB]||{}));touch();vEdit();msg('Baris baru ditambahkan di bawah');const l=$('eb').lastElementChild;l.scrollIntoView();l.querySelector('input[type=text]').focus()}
- else if(t.dataset.del!=null){if(t.dataset.arm){DSET().splice(+t.dataset.del,1);touch();vEdit()}else{t.dataset.arm=1;t.textContent='Yakin?'}}
- else if(t.id==='exp')doExport();else if(t.id==='bap')bulkApply();else if(t.id==='bdel')bulkDel(t);
- else if(t.id==='rst'){if(t.dataset.arm){try{localStorage.removeItem('lcc-v2')}catch(x){}location.reload()}else{t.dataset.arm=1;t.textContent='Yakin? Semua data dihapus'}}});
-$('v').addEventListener('change',e=>{const t=e.target;
- if(t.dataset.k!=null){const r=DSET()[+t.dataset.i];r[t.dataset.k]=t.type==='date'?(t.value||null):t.value;touch();const tr=t.closest('tr');if(tr)tr.dataset.st=r.st}
- else if(t.id==='imp'){const f=t.files[0];t.value='';doImport(f)}else bulkChange(t)});
+const a=DSET();const n=SEL.size;[...SEL].sort((x,y)=>y-x).forEach(i=>a.splice(i,1));touch();vEdit();msg(n+' baris dihapus (bisa diurungkan)')}
+$('v').addEventListener('click',e=>{const t=e.target.closest('button');if(!t||cur==='master')return;
+if(t.dataset.ds){EDS=t.dataset.ds;vEdit()}
+else if(t.id==='add'){DSET().push(Object.assign(BLANK[EDS](),PREDEF[ETAB]||{}));touch();vEdit();msg('Baris baru ditambahkan di bawah');const l=$('eb').lastElementChild;l.scrollIntoView();l.querySelector('input[type=text]').focus()}
+else if(t.dataset.dup!=null){const a=DSET(),k=+t.dataset.dup;a.splice(k+1,0,JSON.parse(JSON.stringify(a[k])));touch();vEdit();msg('Baris disalin')}
+else if(t.dataset.del!=null){if(t.dataset.arm){DSET().splice(+t.dataset.del,1);touch();vEdit();msg('Baris dihapus (bisa diurungkan)')}else{t.dataset.arm=1;t.textContent='Yakin?'}}
+else if(t.id==='exp')doExport();else if(t.id==='bap')bulkApply();else if(t.id==='bdel')bulkDel(t);
+else if(t.id==='rst'||t.id==='rsl'){if(!t.dataset.arm){t.dataset.arm=1;t.textContent='Yakin? Bisa diurungkan';return}
+if(t.id==='rst'){M.length=0;P.length=0;DOC.length=0;EXTRA.main=[];EXTRA.proj=[];EXTRA.docs=[]}else Object.assign(D,JSON.parse(DEF));
+touch();vEdit();msg(t.id==='rst'?'Semua data dikosongkan (bisa diurungkan)':'Daftar pilihan dikembalikan ke bawaan')}
+else if(t.id==='bk')backup();else if(t.id==='rt')$('rf').click()});
+$('v').addEventListener('change',e=>{const t=e.target;if(cur==='master')return;
+if(t.dataset.k!=null){const r=DSET()[+t.dataset.i];r[t.dataset.k]=t.type==='date'?(t.value||null):t.value;touch();const tr=t.closest('tr');if(tr)tr.dataset.st=r.st}
+else if(t.id==='imp'){const f=t.files[0];t.value='';doImport(f)}else if(t.id==='rf'){const f=t.files[0];t.value='';restore(f)}else bulkChange(t)});
+/* impor Excel */
 const S=v=>v==null?'':String(v).trim();
+const canon=(a,v)=>{v=S(v).replace(/\s+/g,' ');if(!v)return '';return a.find(x=>x.toLowerCase()===v.toLowerCase())||v};
 const nz=s=>S(s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const MI={jan:1,feb:2,mar:3,apr:4,mei:5,may:5,jun:6,jul:7,agu:8,aug:8,ags:8,sep:9,okt:10,oct:10,nov:11,des:12,dec:12};
 function toISO(v){let y,m,d,r;if(v==null||v==='')return null;
- if(typeof v==='number'){if(v<20000||v>80000)return null;const q=new Date(Math.round((v-25569)*864e5));y=q.getUTCFullYear();m=q.getUTCMonth()+1;d=q.getUTCDate()}
- else{const s=S(v);
-  if(r=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/)){y=+r[1];m=+r[2];d=+r[3]}
-  else if(r=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/)){d=+r[1];m=+r[2];y=+r[3];if(y<100)y+=2000;if(m>12&&d<=12)[d,m]=[m,d]}
-  else if(r=s.match(/^(\d{1,2})\s+([A-Za-z]{3,})\.?,?\s+(\d{4})/)){d=+r[1];m=MI[r[2].slice(0,3).toLowerCase()];y=+r[3]}}
- if(!y||!m||!d||m>12||d>31||y<1990||y>2100)return null;return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
-const normSt=v=>{const s=nz(v);if(!s||/^(belum|not|todo|open|baru|backlog|new)/.test(s))return 'Not started';if(/complet|selesai|done|closed|finish|beres|tuntas/.test(s))return 'Completed';if(/block|blok|hold|tunda|stuck|pending|kendala/.test(s))return 'Blocked';if(/progress|berjalan|proses|ongoing|wip|dikerjakan|jalan/.test(s))return 'In progress';return 'Not started'};
-const normP=v=>{const s=S(v),m=s.match(/^p?\s*([0-3])$/i);if(m)return 'P'+m[1];const l=s.toLowerCase();return /krit|urgent|critical/.test(l)?'P0':/high|tinggi/.test(l)?'P1':/med|sedang|normal/.test(l)?'P2':/low|rendah/.test(l)?'P3':s.toUpperCase()};
-const SYN={title:['requestlists','requestlist','request','permintaan','judul','tugas','pekerjaan','perihal','uraian','kegiatan','subject'],bu:['businessunit','bu','unitbisnis','perusahaan','company','entitas'],p:['priority','prioritas','prio'],dv:['division','divisi'],dp:['department','departemen','dept'],cat:['category','kategori','jenis','legalframework','framework','tipe','type'],st:['status','statustugas','progress'],sd:['startdate','mulai','tanggalmulai','start','tglmulai','berlakumulai','tanggaldokumen'],ed:['enddate','selesai','tanggalselesai','end','deadline','tglselesai','duedate','tanggalakhir','berakhir','tanggalberakhir','expired','expiry','masaberlaku','validuntil','jatuhtempo'],dl:['deliverable','output','hasil'],note:['notes','note','catatan','keterangan','remark','remarks'],project:['taskproject','project','proyek','namaproyek'],sub:['subtask','subtugas','subproyek','tahapan'],pi:['pi','penyebab','problemidentification','kendala','masalah'],ca:['ca','correctiveaction','tindakan','tindaklanjut'],name:['documentname','namadokumen','dokumen','document','nama'],inst:['instansi','instansi2ndparties','2ndparties','pihakkedua','counterparty','partner','vendor'],file:['file','filename','namafile','berkas','link']};
+if(v instanceof Date){y=v.getFullYear();m=v.getMonth()+1;d=v.getDate()}
+else if(typeof v==='number'){if(v<20000||v>80000)return null;const q=new Date(Math.round((v-25569)*864e5));y=q.getUTCFullYear();m=q.getUTCMonth()+1;d=q.getUTCDate()}
+else{const s=S(v);
+if(r=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/)){y=+r[1];m=+r[2];d=+r[3]}
+else if(r=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})/)){d=+r[1];m=+r[2];y=+r[3];if(y<100)y+=2000;if(m>12&&d<=12)[d,m]=[m,d]}
+else if(r=s.match(/^(\d{1,2})[\s-]+([A-Za-z]{3,})\.?,?[\s-]+(\d{2,4})/)){d=+r[1];m=MI[r[2].slice(0,3).toLowerCase()];y=+r[3];if(y<100)y+=2000}}
+if(!y||!m||!d||m>12||d>31||y<1990||y>2100)return null;return y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+const normSt=v=>{const s=nz(v);if(!s||/^(belum|not|todo|open|baru|backlog|new)/.test(s))return 'Not started';if(/complet|selesai|done|closed|finish|beres|tuntas/.test(s))return 'Completed';if(/block|blok|hold|tunda|stuck|pending|kendala|waiting/.test(s))return 'Blocked';if(/progress|berjalan|proses|ongoing|wip|dikerjakan|jalan|review/.test(s))return 'In progress';return 'Not started'};
+const normP=v=>{const s=S(v),m=s.match(/^p?\s*([0-3])(?!\d)/i);if(m)return 'P'+m[1];const l=s.toLowerCase();return /krit|urgent|critical/.test(l)?'P0':/high|tinggi/.test(l)?'P1':/med|sedang|normal/.test(l)?'P2':/low|rendah/.test(l)?'P3':s.toUpperCase()};
+const SYN={title:['requestlists','requestlist','request','permintaan','judul','tugas','pekerjaan','perihal','uraian','kegiatan','subject','taskname','task'],bu:['businessunit','bu','unitbisnis','perusahaan','company','entitas'],p:['priority','prioritas','prio'],dv:['division','divisi'],dp:['department','departemen','dept'],cat:['category','kategori','jenis','legalframework','framework','tipe','type'],st:['status','statustugas','progress'],sd:['startdate','mulai','tanggalmulai','start','tglmulai','berlakumulai','tanggaldokumen'],ed:['enddate','selesai','tanggalselesai','end','deadline','tglselesai','duedate','tanggalakhir','berakhir','tanggalberakhir','expired','expiry','masaberlaku','validuntil','jatuhtempo'],dl:['deliverable','output','hasil'],note:['notes','note','catatan','keterangan','remark','remarks'],project:['taskproject','project','proyek','namaproyek'],sub:['subtask','subtugas','subproyek','tahapan'],pi:['pi','penyebab','problemidentification','kendala','masalah'],ca:['ca','correctiveaction','tindakan','tindaklanjut'],name:['documentname','namadokumen','dokumen','document','nama'],inst:['instansi','instansi2ndparties','2ndparties','pihakkedua','counterparty','partner','vendor'],file:['file','filename','namafile','berkas','link']};
 function autoMap(hdr,ds){const tr=[];
- COLS[ds].forEach(c=>hdr.forEach((h,ci)=>{const n=nz(h);if(!n)return;let sc=0;(SYN[c[0]]||[]).forEach(s=>{sc=Math.max(sc,n===s?3:(s.length>=4&&n.includes(s))?2:(n.length>=4&&s.includes(n))?1:0)});if(sc)tr.push([sc,c[0],ci])}));
- tr.sort((a,b)=>b[0]-a[0]);const m={},u=new Set();tr.forEach(([s,k,ci])=>{if(m[k]==null&&!u.has(ci)){m[k]=ci;u.add(ci)}});return m}
+COLS[ds].forEach(c=>hdr.forEach((h,ci)=>{const n=nz(h);if(!n)return;let sc=0;(SYN[c[0]]||[]).forEach(s=>{sc=Math.max(sc,n===s?3:(s.length>=4&&n.includes(s))?2:(n.length>=4&&s.includes(n))?1:0)});if(sc)tr.push([sc,c[0],ci])}));
+tr.sort((a,b)=>b[0]-a[0]);const m={},u=new Set();tr.forEach(([s,k,ci])=>{if(m[k]==null&&!u.has(ci)){m[k]=ci;u.add(ci)}});return m}
 function hdrRow(aoa){let best=0,bs=-1;const A=aoa.slice(0,15);
- A.forEach((r,i)=>{const sc=r.filter(c=>{const n=nz(c);return n&&Object.values(SYN).some(a=>a.includes(n))}).length;if(sc>bs){bs=sc;best=i}});
- if(bs<=0){const i=A.findIndex(r=>r.filter(c=>S(c)).length>=2);return i<0?0:i}return best}
+A.forEach((r,i)=>{const sc=r.filter(c=>{const n=nz(c);return n&&Object.values(SYN).some(a=>a.includes(n))}).length;if(sc>bs){bs=sc;best=i}});
+if(bs<=0){const i=A.findIndex(r=>r.filter(c=>S(c)).length>=2);return i<0?0:i}return best}
 function guess(sh){const hdr=(sh.aoa[sh.hr]||[]).map(S);let best='skip',bs=0;
- [['main','title',/main|tracker|request|permintaan/i],['proj','sub',/project|proyek/i],['docs','name',/document|dokumen|doc/i]].forEach(([ds,key,rx])=>{const m=autoMap(hdr,ds),h=rx.test(sh.name);const sc=Object.keys(m).length+(m[key]!=null?3:0)+(h?4:0);if((m[key]!=null||h)&&sc>bs){bs=sc;best=ds}});
- sh.t=bs>=3?best:'skip';sh.m=sh.t==='skip'?{}:autoMap(hdr,sh.t)}
+[['main','title',/main|tracker|request|permintaan/i],['proj','sub',/project|proyek/i],['docs','name',/document|dokumen|doc/i]].forEach(([ds,key,rx])=>{const m=autoMap(hdr,ds),h=rx.test(sh.name);const sc=Object.keys(m).length+(m[key]!=null?3:0)+(h?4:0);if((m[key]!=null||h)&&sc>bs){bs=sc;best=ds}});
+sh.t=bs>=3?best:'skip';sh.m=sh.t==='skip'?{}:autoMap(hdr,sh.t)}
 const wzRows=sh=>sh.aoa.slice(sh.hr+1).filter(r=>Object.values(sh.m).some(ci=>S(r[ci])!=='')&&!(sh.t==='proj'&&sh.m.sub!=null&&S(r[sh.m.sub])===''));
 let WZ=null;
 function wzClose(){const e=$('wz');if(e)e.remove();WZ=null}
 function wzRender(){const lab={main:'Tracker utama',proj:'Proyek',docs:'Dokumen'};
- $('wz').innerHTML=`<div class="wzb" role="dialog" aria-label="Impor Excel"><h2>Impor: ${esc(WZ.file)}</h2><p class="sub">Kolom dicocokkan otomatis dari judul kolom di file Anda. Periksa dan ubah bila perlu. SLA, sisa hari, dan umur dihitung otomatis.</p>
- <div class="tools"><label><input type="radio" name="wm" value="replace"${WZ.mode==='replace'?' checked':''}> Ganti data yang ada</label><label><input type="radio" name="wm" value="append"${WZ.mode==='append'?' checked':''}> Tambahkan ke data yang ada</label><label><input type="checkbox" id="wx"${WZ.extra?' checked':''}> Bawa kolom lain sebagai kolom tambahan</label></div>
- ${WZ.sheets.map((sh,i)=>{const hdr=(sh.aoa[sh.hr]||[]).map(S);return `<section class="pn" style="margin-top:12px"><div class="tools"><b>${esc(sh.name)}</b><span class="mu">${sh.aoa.length} baris</span>
- <select class="fi" data-w="t" data-s="${i}" aria-label="Tujuan sheet ${esc(sh.name)}"><option value="skip">Lewati sheet ini</option>${Object.keys(lab).map(d=>`<option value="${d}"${sh.t===d?' selected':''}>Jadikan ${lab[d]}</option>`).join('')}</select>
- <label class="mu">Baris judul kolom <input type="number" min="1" class="fi" style="width:70px;min-width:0" data-w="h" data-s="${i}" value="${sh.hr+1}"></label>${sh.t!=='skip'?`<b>${wzRows(sh).length} baris akan diimpor</b>`:''}</div>
- ${sh.t!=='skip'?`<div class="wg">${COLS[sh.t].map(c=>`<label>${c[1]}<select class="fi" data-w="m" data-s="${i}" data-f="${c[0]}"><option value="">(tidak diisi)</option>${hdr.map((h,ci)=>h?`<option value="${ci}"${sh.m[c[0]]===ci?' selected':''}>${esc(h)}</option>`:'').join('')}</select></label>`).join('')}</div>`:''}</section>`}).join('')}
- <div class="tools" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-w="x">Batal</button><button class="btn on" data-w="go">Impor sekarang</button></div></div>`}
+$('wz').innerHTML=`<div class="wzb" role="dialog" aria-label="Impor Excel"><h2>Impor: ${esc(WZ.file)}</h2><p class="sub">Kolom dicocokkan otomatis dari judul kolom di file Anda. Periksa dan ubah bila perlu. SLA, sisa hari, dan umur dihitung otomatis. Nilai divisi, departemen, prioritas, dan business unit yang baru otomatis masuk ke Kelola daftar.</p>
+<div class="tools"><label><input type="radio" name="wm" value="replace"${WZ.mode==='replace'?' checked':''}> Ganti data yang ada</label><label><input type="radio" name="wm" value="append"${WZ.mode==='append'?' checked':''}> Tambahkan ke data yang ada (duplikat dilewati)</label><label><input type="checkbox" id="wx"${WZ.extra?' checked':''}> Bawa kolom lain sebagai kolom tambahan</label></div>
+${WZ.sheets.map((sh,i)=>{const hdr=(sh.aoa[sh.hr]||[]).map(S);return `<section class="pn" style="margin-top:12px"><div class="tools"><b>${esc(sh.name)}</b><span class="mu">${sh.aoa.length} baris</span>
+<select class="fi" data-w="t" data-s="${i}" aria-label="Tujuan sheet ${esc(sh.name)}"><option value="skip">Lewati sheet ini</option>${Object.keys(lab).map(d=>`<option value="${d}"${sh.t===d?' selected':''}>Jadikan ${lab[d]}</option>`).join('')}</select>
+<label class="mu">Baris judul kolom <input type="number" min="1" class="fi" style="width:70px;min-width:0" data-w="h" data-s="${i}" value="${sh.hr+1}"></label>${sh.t!=='skip'?`<b>${wzRows(sh).length} baris akan diimpor</b>`:''}</div>
+${sh.t!=='skip'?`<div class="wg">${COLS[sh.t].map(c=>`<label>${c[1]}<select class="fi" data-w="m" data-s="${i}" data-f="${c[0]}"><option value="">(tidak diisi)</option>${hdr.map((h,ci)=>h?`<option value="${ci}"${sh.m[c[0]]===ci?' selected':''}>${esc(h)}</option>`:'').join('')}</select></label>`).join('')}</div>`:''}</section>`}).join('')}
+<div class="tools" style="margin-top:14px;justify-content:flex-end"><button class="btn" data-w="x">Batal</button><button class="btn on" data-w="go">Impor sekarang</button></div></div>`}
 function wzEvt(e){const t=e.target,w=t.dataset.w;if(!WZ)return;
- if(t.name==='wm'){WZ.mode=t.value;return}if(t.id==='wx'){WZ.extra=t.checked;return}
- const sh=WZ.sheets[+t.dataset.s];if(!sh)return;
- if(w==='t'){sh.t=t.value;sh.m=sh.t==='skip'?{}:autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
- else if(w==='h'){sh.hr=Math.max(0,(+t.value||1)-1);if(sh.t!=='skip')sh.m=autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
- else if(w==='m'){if(t.value==='')delete sh.m[t.dataset.f];else sh.m[t.dataset.f]=+t.value;wzRender()}}
+if(t.name==='wm'){WZ.mode=t.value;return}if(t.id==='wx'){WZ.extra=t.checked;return}
+const sh=WZ.sheets[+t.dataset.s];if(!sh)return;
+if(w==='t'){sh.t=t.value;sh.m=sh.t==='skip'?{}:autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
+else if(w==='h'){sh.hr=Math.max(0,(+t.value||1)-1);if(sh.t!=='skip')sh.m=autoMap((sh.aoa[sh.hr]||[]).map(S),sh.t);wzRender()}
+else if(w==='m'){if(t.value==='')delete sh.m[t.dataset.f];else sh.m[t.dataset.f]=+t.value;wzRender()}}
 function wzApply(){const done={},out=[],NM={main:'permintaan',proj:'sub-task',docs:'dokumen'};
- const addU=(a,v)=>{if(v&&!a.includes(v))a.push(v)};
- WZ.sheets.forEach(sh=>{if(sh.t==='skip')return;const ds=sh.t,A=({main:M,proj:P,docs:DOC})[ds],hdr=(sh.aoa[sh.hr]||[]).map(S),used=new Set(Object.values(sh.m)),body=sh.aoa.slice(sh.hr+1);
-  const ex=[];if(WZ.extra)hdr.forEach((h,ci)=>{if(!h||used.has(ci)||/^(sla|sisa ?hari|age|umur|no\.?|#)$/i.test(h)||(ds==='docs'&&/status/i.test(h)))return;if(body.some(r=>S(r[ci])!==''))ex.push([ci,h])});
-  let cur='';const objs=[];
-  wzRows(sh).forEach(r=>{const o={};COLS[ds].forEach(c=>o[c[0]]=c[2]==='d'?null:'');
-   Object.entries(sh.m).forEach(([k,ci])=>{const c=COLS[ds].find(x=>x[0]===k),v=r[ci];o[k]=c[2]==='d'?toISO(v):k==='st'?normSt(v):k==='p'?normP(v):S(v)});
-   if(ds!=='docs'&&!o.st)o.st='Not started';
-   if(ds==='proj'){if(o.project)cur=o.project;else o.project=cur;if(!o.sub&&sh.m.sub==null)o.sub=o.project;if(!o.sub)return}
-   ex.forEach(([ci,h])=>{if(S(r[ci])!=='')o['x_'+h]=S(r[ci])});objs.push(o)});
-  ex.forEach(([,h])=>addU(EXTRA[ds],h));
-  if(WZ.mode==='replace'&&!done[ds])A.splice(0,A.length);done[ds]=1;
-  objs.forEach(o=>{addU(D.bu,o.bu);addU(D.dvs,o.dv);addU(D.dps,o.dp);if(o.cat&&!D.fw.some(f=>f.n===o.cat))D.fw.push({n:o.cat,d:[]});A.push(o)});
-  out.push(objs.length+' '+NM[ds])});
- if(!out.length){wzClose();return msg('Tidak ada sheet yang diimpor')}
- wzClose();touch();vEdit();msg('Impor selesai: '+out.join(', '))}
+const addU=(a,v)=>{if(v&&!a.includes(v))a.push(v)};
+WZ.sheets.forEach(sh=>{if(sh.t==='skip')return;const ds=sh.t,A=({main:M,proj:P,docs:DOC})[ds],hdr=(sh.aoa[sh.hr]||[]).map(S),used=new Set(Object.values(sh.m)),body=sh.aoa.slice(sh.hr+1);
+const ex=[];if(WZ.extra)hdr.forEach((h,ci)=>{if(!h||used.has(ci)||/^(sla|sisa ?hari|age|umur|no\.?|#)$/i.test(h)||(ds==='docs'&&/status/i.test(h)))return;if(body.some(r=>S(r[ci])!==''))ex.push([ci,h])});
+let cur='';const objs=[];
+wzRows(sh).forEach(r=>{const o={};COLS[ds].forEach(c=>o[c[0]]=c[2]==='d'?null:'');
+Object.entries(sh.m).forEach(([k,ci])=>{const c=COLS[ds].find(x=>x[0]===k),v=r[ci];o[k]=c[2]==='d'?toISO(v):k==='st'?normSt(v):k==='p'?normP(v):S(v)});
+if(ds!=='docs'&&!o.st)o.st='Not started';
+if(ds==='proj'){if(o.project)cur=o.project;else o.project=cur;if(!o.sub&&sh.m.sub==null)o.sub=o.project;if(!o.sub)return}
+ex.forEach(([ci,h])=>{if(S(r[ci])!=='')o['x_'+h]=S(r[ci])});objs.push(o)});
+ex.forEach(([,h])=>addU(EXTRA[ds],h));
+if(WZ.mode==='replace'&&!done[ds])A.splice(0,A.length);done[ds]=1;
+let skip=0;const key=o=>[o.title||o.name||(o.project+'|'+o.sub),o.sd,o.ed].join('~').toLowerCase(),seen=new Set(WZ.mode==='append'?A.map(key):[]);
+objs.forEach(o=>{o.bu=canon(D.bu,o.bu);o.dv=canon(D.dvs,o.dv);o.dp=canon(D.dps,o.dp);if(o.p!==undefined)o.p=canon(D.pri,o.p);
+if(o.cat){const f=D.fw.find(f=>nz(f.n)===nz(o.cat));if(f)o.cat=f.n;else D.fw.push({n:o.cat,d:[]})}
+const kk=key(o);if(WZ.mode==='append'&&seen.has(kk)){skip++;return}seen.add(kk);
+addU(D.bu,o.bu);addU(D.dvs,o.dv);addU(D.dps,o.dp);addU(D.pri,o.p);A.push(o)});
+out.push((objs.length-skip)+' '+NM[ds]+(skip?' ('+skip+' duplikat dilewati)':''))});
+if(!out.length){wzClose();return msg('Tidak ada sheet yang diimpor')}
+wzClose();touch();vEdit();msg('Impor selesai: '+out.join(', '))}
 async function doImport(f){
-  if(!f)return;if(!window.XLSX)return msg('Pustaka Excel gagal dimuat. Periksa koneksi internet.');
-  try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
-  const sheets=wb.SheetNames.map(n=>({name:n,aoa:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:true,blankrows:false})})).filter(s=>s.aoa.length);
-  if(!sheets.length)return msg('File kosong');
-  sheets.forEach(s=>{s.hr=hdrRow(s.aoa);guess(s)});
-  WZ={file:f.name,sheets,mode:'replace',extra:true};
-  const w=document.createElement('div');w.id='wz';w.className='wz';document.body.appendChild(w);
-  w.addEventListener('change',wzEvt);w.addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;if(b.dataset.w==='x')wzClose();else if(b.dataset.w==='go')wzApply()});
-  wzRender()}catch(x){msg('File tidak bisa dibaca')}
+if(!f)return;if(!window.XLSX)return msg('Pustaka Excel gagal dimuat. Periksa koneksi internet.');
+try{const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
+const sheets=wb.SheetNames.map(n=>({name:n,aoa:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:true,blankrows:false})})).filter(s=>s.aoa.length);
+if(!sheets.length)return msg('File kosong');
+sheets.forEach(s=>{s.hr=hdrRow(s.aoa);guess(s)});
+WZ={file:f.name,sheets,mode:'replace',extra:true};
+const w=document.createElement('div');w.id='wz';w.className='wz';document.body.appendChild(w);
+w.addEventListener('change',wzEvt);w.addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(!b)return;if(b.dataset.w==='x')wzClose();else if(b.dataset.w==='go')wzApply()});
+wzRender()}catch(x){msg('File tidak bisa dibaca')}
 }
 async function doExport(){
-  if(!window.XLSX)return msg('Pustaka Excel gagal dimuat');
-  const z=s=>s?{t:'n',v:Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5+25569,z:'yyyy-mm-dd'}:'';
-  const n=v=>v==null?'':v,wb=XLSX.utils.book_new(),add=(nm,r)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),nm);
-  const L={'Completed':'✅ Selesai'};
-  add('Main Tracker',[['Request Lists','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes',...EXTRA.main],...M.map(x=>[x.title,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,...EXTRA.main.map(h=>x['x_'+h]||'')])]);
-  add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA',...EXTRA.proj],...P.map(x=>[x.project,x.sub,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca,...EXTRA.proj.map(h=>x['x_'+h]||'')])]);
-  add('Document Lists',[['Document Name','Division','Department','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status',...EXTRA.docs],...DOC.map(x=>[x.name,x.dv,x.dp,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0],...EXTRA.docs.map(h=>x['x_'+h]||'')])]);
-  const data=XLSX.write(wb,{bookType:'xlsx',type:'array'}),fn='Legal_Compliance_Task_Tracker_edit.xlsx';
-  try{const dl=window.claude&&await claude.use('downloads');if(dl){await dl.save({filename:fn,data});return msg('File disimpan')}}catch(x){if(x&&x.code==='declined')return msg('Unduhan dibatalkan')}
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=fn;a.click();msg('File diunduh')
+if(!window.XLSX)return msg('Pustaka Excel gagal dimuat');
+const z=s=>s?{t:'n',v:Date.UTC(+s.slice(0,4),+s.slice(5,7)-1,+s.slice(8,10))/864e5+25569,z:'yyyy-mm-dd'}:'';
+const n=v=>v==null?'':v,wb=XLSX.utils.book_new(),add=(nm,r)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),nm);
+add('Main Tracker',[['Request Lists','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes',...EXTRA.main],...M.map(x=>[x.title,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,...EXTRA.main.map(h=>x['x_'+h]||'')])]);
+add('Project',[['PROJECT'],['Task Project','Sub Task','Business Unit','Priority','Division','Department','Category','Status','Start date','End date','SLA','Deliverable','Notes','PI','CA',...EXTRA.proj],...P.map(x=>[x.project,x.sub,x.bu,x.p,x.dv,x.dp,x.cat,x.st,z(x.sd),z(x.ed),n(x.dur),x.dl,x.note,x.pi,x.ca,...EXTRA.proj.map(h=>x['x_'+h]||'')])]);
+add('Document Lists',[['Document Name','Division','Department','Category','Instansi / 2nd Parties','Start date','End date','Sisa Hari','File','Status',...EXTRA.docs],...DOC.map(x=>[x.name,x.dv,x.dp,x.cat,x.inst,z(x.sd),z(x.ed),n(x.left),x.file,DS[x.st][0],...EXTRA.docs.map(h=>x['x_'+h]||'')])]);
+const data=XLSX.write(wb,{bookType:'xlsx',type:'array'}),fn='Legal_Compliance_Task_Tracker_edit.xlsx';
+try{const dl=window.claude&&await claude.use('downloads');if(dl){await dl.save({filename:fn,data});return msg('File disimpan')}}catch(x){if(x&&x.code==='declined')return msg('Unduhan dibatalkan')}
+const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=fn;a.click();msg('File diunduh')
 }
 setInterval(()=>{const n=tdy();if(n!==D.today){D.today=n;$('asof').textContent='Data per '+fd(n);fix();derive();if(cur!=='edit')go(cur)}},60000);
-go('ringkasan');
+LAST=snap();hbtn();go('ringkasan');
 </script></body></html>
